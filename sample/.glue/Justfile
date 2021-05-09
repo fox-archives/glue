@@ -1,0 +1,13 @@
+# shellcheck shell=sh
+
+build:
+	../../glue.sh build
+
+ci:
+	../../glue.sh ci
+
+release:
+	../../glue.sh release
+
+deploy:
+	../../glue.sh deploy

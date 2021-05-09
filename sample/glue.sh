@@ -1,0 +1,1 @@
+GLUE_LANG="go"
