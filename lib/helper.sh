@@ -1,9 +1,14 @@
 # shellcheck shell=bash
 
 util_get_wd() (
-	while ! [[ -d ".glue" ]]; do
+	# TODO: glue.sh to toml
+	while [[ ! -f "glue.sh" && "$PWD" != / ]]; do
 		cd ..
 	done
+
+	if [[ $PWD == / ]]; then
+		die 'No glue config file found in current or parent paths'
+	fi
 
 	printf "%s" "$PWD"
 )

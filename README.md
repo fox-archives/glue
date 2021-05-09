@@ -34,6 +34,7 @@ If you use `glue` and wish to add functionality that is generalized enough for m
 - Easy escape hatches are provided if you wish to overide or modify any generalizations
 - Written in pure Bash
 - Configuration decoupled from traditional locations of configuration (everything is isolated in `.glue`)
+- Automate your cargo culting (or the configuration of best practices (however you interpret))
 
 ### Details
 
