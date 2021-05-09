@@ -2,7 +2,6 @@
 
 util_get_wd() (
 	while ! [[ -d ".glue" ]]; do
-		echo "$PWD" >&3
 		cd ..
 	done
 
