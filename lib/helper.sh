@@ -97,8 +97,6 @@ util_sort_files_by_when() {
 	done
 }
 
-# TODO: code duplication
-
 # run each command that is language-specific. then
 # run the generic version of a particular command. for each one,
 # only run the-user command file is one in 'auto' isn't present
@@ -118,38 +116,13 @@ util_get_command_scripts() {
 		newLangs+="-$l "
 	done
 
+	# the blank 'lang' represents a file like 'build-before.sh' or 'build.sh'
 	for lang in $newLangs ''; do
+		# a blank 'when' represents a file like 'build-go.sh' or 'build.sh'
 		for when in -before '' -after; do
-			# run the file, if it exists (override)
-			local hasRanFile=no
-			for file in "$dir/$subcommand$lang$when".*?; do
-				if [[ $hasRanFile = yes ]]; then
-					# TODO: cleanup error
-					log_error "Should not have multiple matches for subcommand '$subcommand', lang '$lang', and dir '$dir' (possible duplicate of '$file')"
-					break
-				fi
-
-				hasRanFile=yes
-				exec_file "$file"
-			done
-
-			# we ran the user file, which overrides the auto file
-			# continue to next 'when'
-			if [[ $hasRanFile == yes ]]; then
-				continue
-			fi
-
-			# if no files were ran, run the auto file, if it exists
-			for file in "$dir/auto/$subcommand$lang$when".*?; do
-				if [[ $hasRanFile = yes ]]; then
-					# TODO: cleanup error
-					log_error "Should not have multiple matches for subcommand '$subcommand', lang '$lang', and dir '$dir' (possible duplicate of '$file')"
-					break
-				fi
-
-				hasRanFile=yes
-				exec_file "$file"
-			done
+			# this either runs the 'auto' script or the user-override, depending
+			# on whether which ones are present
+			util_run_a_relevant_script "$subcommand" "$dir" "$lang" "$when"
 		done
 	done
 
@@ -160,49 +133,15 @@ util_get_command_scripts() {
 # only run a language specific version of a command
 util_get_command_and_lang_scripts() {
 	ensure_fn_args 'util_get_command_and_lang_scripts' '1 2 3' "$@"
-
 	local subcommand="$1"
 	local lang="$2"
 	local dir="$3"
 
-	shopt -q nullglob
-	shoptExitStatus="$?"
-
-	shopt -s nullglob
 	for when in -before '' -after; do
-		# run the file, if it exists (override)
-		local hasRanFile=no
-		for file in "$dir/$subcommand-$lang$when".*?; do
-			if [[ $hasRanFile = yes ]]; then
-				# TODO: cleanup error
-				log_error "Should not have multiple matches for subcommand '$subcommand', lang '$lang', and dir '$dir' (possible duplicate of '$file')"
-				break
-			fi
-
-			hasRanFile=yes
-			exec_file "$file"
-		done
-
-		# we ran the user file, which overrides the auto file
-		# continue to next 'when'
-		if [[ $hasRanFile == yes ]]; then
-			continue
-		fi
-
-		# if no files were ran, run the auto file, if it exists
-		for file in "$dir/auto/$subcommand-$lang$when".*?; do
-			if [[ $hasRanFile = yes ]]; then
-				# TODO: cleanup error
-				log_error "Should not have multiple matches for subcommand '$subcommand', lang '$lang', and dir '$dir' (possible duplicate of '$file')"
-				break
-			fi
-
-			hasRanFile=yes
-			exec_file "$file"
-		done
+		# this either runs the 'auto' script or the user-override, depending
+		# on whether which ones are present
+		util_run_a_relevant_script "$subcommand" "$dir" "-$lang" "$when"
 	done
-
-	(( shoptExitStatus != 0 )) && shopt -u nullglob
 
 	# # override
 	# local -a filteredOverrideFiles=() overrideFiles=()
@@ -261,4 +200,48 @@ util_get_command_and_lang_scripts() {
 	# 	# filtered, and sorted
 	# 	printf "FILTERED AUTO: %s\n" "$autoFile"
 	# done
+}
+
+util_run_a_relevant_script() {
+	ensure_fn_args 'util_run_a_relevant_script' '1 2' "$@"
+	local subcommand="$1"
+	local dir="$2"
+	local lang="$3" # can be blank
+	local when="$4" # can be blank
+
+	shopt -q nullglob
+	shoptExitStatus="$?"
+
+	shopt -s nullglob
+
+	# run the file, if it exists (override)
+	local hasRanFile=no
+	for file in "$dir/$subcommand$lang$when".*?; do
+		if [[ $hasRanFile = yes ]]; then
+			log_error "Duplicate file '$file' should not exist"
+			break
+		fi
+
+		hasRanFile=yes
+		exec_file "$file"
+	done
+
+	# we ran the user file, which overrides the auto file
+	# continue to next 'when' by returning
+	if [[ $hasRanFile == yes ]]; then
+		return
+	fi
+
+	# if no files were ran, run the auto file, if it exists
+	for file in "$dir/auto/$subcommand$lang$when".*?; do
+		if [[ $hasRanFile = yes ]]; then
+			log_error "Duplicate file '$file' should not exist"
+			break
+		fi
+
+		hasRanFile=yes
+		exec_file "$file"
+	done
+
+	(( shoptExitStatus != 0 )) && shopt -u nullglob
 }
