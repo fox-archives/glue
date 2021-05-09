@@ -2,4 +2,4 @@
 
 # declare -a GLUE_LANG=("go")
 
-GLUE_LANG="go java"
+GLUE_LANG="java go"

@@ -113,12 +113,16 @@ util_get_command_scripts() {
 	shoptExitStatus="$?"
 
 	shopt -s nullglob
-	# TODO: only difference is this lang in langs
-	for lang in $langs; do
+	local newLangs
+	for l in $langs; do
+		newLangs+="-$l "
+	done
+
+	for lang in $newLangs ''; do
 		for when in -before '' -after; do
 			# run the file, if it exists (override)
 			local hasRanFile=no
-			for file in "$dir/$subcommand-$lang$when".*?; do
+			for file in "$dir/$subcommand$lang$when".*?; do
 				if [[ $hasRanFile = yes ]]; then
 					# TODO: cleanup error
 					log_error "Should not have multiple matches for subcommand '$subcommand', lang '$lang', and dir '$dir' (possible duplicate of '$file')"
@@ -136,7 +140,7 @@ util_get_command_scripts() {
 			fi
 
 			# if no files were ran, run the auto file, if it exists
-			for file in "$dir/auto/$subcommand-$lang$when".*?; do
+			for file in "$dir/auto/$subcommand$lang$when".*?; do
 				if [[ $hasRanFile = yes ]]; then
 					# TODO: cleanup error
 					log_error "Should not have multiple matches for subcommand '$subcommand', lang '$lang', and dir '$dir' (possible duplicate of '$file')"
