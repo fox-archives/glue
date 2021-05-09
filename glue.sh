@@ -7,16 +7,18 @@ source "$SRCDIR/lib/do.sh"
 source "$SRCDIR/lib/helper.sh"
 source "$SRCDIR/lib/util.sh"
 
-glueFile="$(util_get_gluefile)"
-ensure_not_empty 'glueFile' "$glueFile"
+# working directory
+WD="$(util_get_wd)"
+
+glueFile="$WD/glue.sh"
 
 util_source_config "$glueFile"
 
 main() {
 	local subcommand lang
 
-	subcommand="$(util_get_subcommand "$1")"
-	lang="$(util_get_lang "$1")"
+	subcommand="$(util_get_subcommand "$1")" || return
+	lang="$(util_get_lang "$1")" || return
 
 	if [[ -z $subcommand ]]; then
 		die "No subcommand found"

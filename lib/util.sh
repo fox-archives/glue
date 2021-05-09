@@ -29,15 +29,15 @@ log_error() {
 }
 
 ensure_not_empty() {
-	ensure_fn_args 'ensure_not_empty' '1 2' "$@"
+	ensure_fn_args 'ensure_not_empty' '1' "$@" || return
 
 	if [ -z "$2" ]; then
-		die "Variable '$1' is blank"
+		die "Variable '$1' is empty"
 	fi
 }
 
 ensure_file_exists() {
-	ensure_fn_args 'ensure_file_exists' '1' "$@"
+	ensure_fn_args 'ensure_file_exists' '1' "$@" || return
 
 	if [ ! -f "$1" ]; then
 		die "File '$1' does not exist"
@@ -47,7 +47,7 @@ ensure_file_exists() {
 # execs a file if it exists, but prints a warning if
 # the file is there, but not executable
 exec_file() {
-	ensure_fn_args 'exec_file' '1' "$@"
+	ensure_fn_args 'exec_file' '1' "$@" || return
 	file="$1"
 
 	if [[ ${file::1} != / && ${file::2} != ./ ]]; then

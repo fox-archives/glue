@@ -1,11 +1,16 @@
 # shellcheck shell=bash
 
-util_get_gluefile() {
-	printf "%s" "./glue.sh"
-}
+util_get_wd() (
+	while ! [[ -d ".glue" ]]; do
+		echo "$PWD" >&3
+		cd ..
+	done
+
+	printf "%s" "$PWD"
+)
 
 util_source_config() {
-	ensure_fn_args 'util_source_config' '1' "$@"
+	ensure_fn_args 'util_source_config' '1' "$@" || return
 
 	glueFile="$1"
 
@@ -18,7 +23,7 @@ util_source_config() {
 
 # the name of a subcommand
 util_get_subcommand() {
-	ensure_fn_args 'util_get_subcommand' '1' "$@"
+	ensure_fn_args 'util_get_subcommand' '1' "$@" || return
 
 	local subcommand
 	subcommand="${1%%-*}"
@@ -28,7 +33,7 @@ util_get_subcommand() {
 
 # the language a subcommand is for (if any)
 util_get_lang() {
-	ensure_fn_args 'util_get_lang' '1' "$@"
+	ensure_fn_args 'util_get_lang' '1' "$@" || return
 
 	local lang="$1"
 
@@ -58,7 +63,7 @@ util_get_lang() {
 
 # when a subcommand runs
 util_get_when() {
-	ensure_fn_args 'util_get_when' '1' "$@"
+	ensure_fn_args 'util_get_when' '1' "$@" || return
 
 	local when="$1"
 
@@ -73,7 +78,7 @@ util_get_when() {
 
 # this sorts an array of files by when. we assume files have a valid structure
 util_sort_files_by_when() {
-	ensure_fn_args 'util_sort_files_by_when' '1' "$@"
+	ensure_fn_args 'util_sort_files_by_when' '1' "$@" || return
 
 	local beforeFile duringFile afterFile
 
@@ -101,7 +106,7 @@ util_sort_files_by_when() {
 # run the generic version of a particular command. for each one,
 # only run the-user command file is one in 'auto' isn't present
 util_get_command_scripts() {
-	ensure_fn_args 'util_get_command_and_lang_scripts' '1 2 3' "$@"
+	ensure_fn_args 'util_get_command_and_lang_scripts' '1 2 3' "$@" || return
 
 	local subcommand="$1"
 	local langs="$2"
@@ -132,7 +137,7 @@ util_get_command_scripts() {
 
 # only run a language specific version of a command
 util_get_command_and_lang_scripts() {
-	ensure_fn_args 'util_get_command_and_lang_scripts' '1 2 3' "$@"
+	ensure_fn_args 'util_get_command_and_lang_scripts' '1 2 3' "$@" || return
 	local subcommand="$1"
 	local lang="$2"
 	local dir="$3"
@@ -203,7 +208,7 @@ util_get_command_and_lang_scripts() {
 }
 
 util_run_a_relevant_script() {
-	ensure_fn_args 'util_run_a_relevant_script' '1 2' "$@"
+	ensure_fn_args 'util_run_a_relevant_script' '1 2' "$@" || return
 	local subcommand="$1"
 	local dir="$2"
 	local lang="$3" # can be blank

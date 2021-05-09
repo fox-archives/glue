@@ -1,7 +1,8 @@
 # shellcheck shell=bash
 
+# TODO: remove these
 do_command() {
-	ensure_fn_args 'do_command' '1' "$@"
+	ensure_fn_args 'do_command' '1' "$@" || return
 
 	local subcommand="$1"
 	local dir="$PWD/.glue/commands"
@@ -10,7 +11,7 @@ do_command() {
 }
 
 do_command_and_lang() {
-	ensure_fn_args 'do_command_and_lang' '1 2' "$@"
+	ensure_fn_args 'do_command_and_lang' '1 2' "$@" || return
 
 	local subcommand="$1"
 	local lang="$2"
