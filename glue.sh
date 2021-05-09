@@ -24,12 +24,13 @@ main() {
 		die "No subcommand found"
 	fi
 
+	local dir="$PWD/.glue/commands"
 	if [[ -z $lang ]]; then
 		# no specific language. run everything
-		do_command "$subcommand"
+		util_get_command_scripts "$subcommand" "$GLUE_LANG" "$dir"
 	else
 		# run only the command specific to a language
-		do_command_and_lang "$subcommand" "$lang"
+		util_get_command_and_lang_scripts "$subcommand" "$lang" "$dir"
 	fi
 
 

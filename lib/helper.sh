@@ -147,64 +147,6 @@ util_get_command_and_lang_scripts() {
 		# on whether which ones are present
 		util_run_a_relevant_script "$subcommand" "$dir" "-$lang" "$when"
 	done
-
-	# # override
-	# local -a filteredOverrideFiles=() overrideFiles=()
-	# local overrideFile overrideFileSubcommand overrideFileLang
-
-	# readarray -d $'\0' overrideFiles < <(find "$dir/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -printf "%f\0")
-
-	# for overrideFileAndEnding in "${overrideFiles[@]}"; do
-	# 	# build.sh -> build
-	# 	overrideFile="${overrideFileAndEnding%.*}"
-	# 	overrideFileSubcommand="$(util_get_subcommand "$overrideFile")"
-	# 	overrideFileLang="$(util_get_lang "$overrideFile")"
-
-	# 	if ! [[ $overrideFileSubcommand ]]; then
-	# 		continue
-	# 	fi
-
-	# 	if ! [[ $overrideFileLang == "$lang" ]]; then
-	# 		continue
-	# 	fi
-
-	# 	filteredOverrideFiles+=("$overrideFileAndEnding")
-	# done
-
-	# # auto
-	# local -a filteredAutoFiles=() autoFiles=()
-	# local autoFile autoFileSubcommand autoFileLang
-
-	# readarray -d $'\0' autoFiles < <(find "$dir/auto/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -printf "%f\0")
-
-	# for autoFileAndEnding in "${autoFiles[@]}"; do
-	# 	# build.sh -> build
-	# 	autoFile="${autoFileAndEnding%.*}"
-	# 	autoFileSubcommand="$(util_get_subcommand "$autoFile")"
-	# 	autoFileLang="$(util_get_lang "$autoFile")"
-
-	# 	if ! [[ $autoFileSubcommand == "$subcommand" ]]; then
-	# 		continue
-	# 	fi
-
-	# 	if ! [[ $autoFileLang == "$lang" ]]; then
-	# 		continue
-	# 	fi
-
-	# 	# we are here only if the language and the subcommand matches. this means
-	# 	# that later, we only have to worry about the the 'auto' dir priority and
-	# 	# the before/after
-	# 	filteredAutoFiles+=("$autoFileAndEnding")
-	# done
-
-	# # order files
-
-	# declare -a sortedFilteredAutoFiles
-	# readarray -d $'\0' sortedFilteredAutoFiles < <(util_sort_files_by_when "${filteredAutoFiles[@]}")
-	# for autoFile in "${sortedFilteredAutoFiles[@]}"; do
-	# 	# filtered, and sorted
-	# 	printf "FILTERED AUTO: %s\n" "$autoFile"
-	# done
 }
 
 util_run_a_relevant_script() {
