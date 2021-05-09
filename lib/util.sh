@@ -1,4 +1,4 @@
-# shellcheck shell=sh
+# shellcheck shell=bash
 
 # -------------------------- run ------------------------- #
 
@@ -44,20 +44,47 @@ ensure_file_exists() {
 	fi
 }
 
+# execs a file if it exists, but prints a warning if
+# the file is there, but not executable
+exec_file() {
+	ensure_fn_args 'exec_file' '1' "$@"
+	file="$1"
+
+	if [[ ${file::1} != / && ${file::2} != ./ ]]; then
+		file="./$file"
+	fi
+
+	if [ -f "$file" ]; then
+		if [ -x "$file" ]; then
+			"$file"
+			return
+		else
+			log_warn "File '$file' exists, but is not executable. Skipping"
+		fi
+	else
+		log_error "Could not exec file '$file' because it does not exist"
+	fi
+}
+
 ensure_fn_args() {
 	fnName="$1"
 	args="$2"
 	shift; shift
 
 	for arg in $args; do
-		argValue="$(eval "echo '\${$arg}'")"
-		if [ -z "$argValue" ]; then
+		argValue="$(eval "echo \"\${$arg}\"")"
+		if [ -z "$(<<< "$argValue" awk '{ $1=$1; print }')" ]; then
 			die "ensure_fn_args: Arg '$arg' cannot be empty for '$fnName'"
 			return 1
 		fi
 	done
 }
 
-ensure_no_dash() {
-	ensure_fn_args 'ensure_no_dash' '1' "$@"
+contains_element() {
+	local match="$1"
+	shift
+
+	local item
+	for item; do [[ "$item" == "$match" ]] && return 0; done
+	return 1
 }

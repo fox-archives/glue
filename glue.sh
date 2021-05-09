@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
 # shellcheck disable=SC2164
-DIR="$(dirname "$(cd "$(dirname "$0")"; pwd -P)/$(basename "$0")")"
+SRCDIR="$(dirname "$(cd "$(dirname "$0")"; pwd -P)/$(basename "$0")")"
 
-. "$DIR/lib/util.sh"
-. "$DIR/lib/helper.sh"
+source "$SRCDIR/lib/do.sh"
+source "$SRCDIR/lib/helper.sh"
+source "$SRCDIR/lib/util.sh"
 
 glueFile="$(util_get_gluefile)"
 ensure_not_empty 'glueFile' "$glueFile"
@@ -15,13 +16,13 @@ main() {
 	local subcommand lang
 
 	subcommand="$(util_get_subcommand "$1")"
-	lang="$(util_get_variation "$1")"
+	lang="$(util_get_lang "$1")"
 
-	if [ -z "$subcommand" ]; then
+	if [[ -z $subcommand ]]; then
 		die "No subcommand found"
 	fi
 
-	if [ -z "$lang" ]; then
+	if [[ -z $lang ]]; then
 		# no specific language. run everything
 		do_command "$subcommand"
 	else
