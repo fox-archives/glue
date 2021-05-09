@@ -1,15 +1,43 @@
-# zest
+# glue
 
-# TODO: description
+Glue is the manifestation of a generalized task runner with respect to language agnosticity
 
-Zest up heterogenous components of the local segment of the Software Development Lifecycle by synergizing your toolchain, primarily with cross-utility interoperability and easing the integration of auxillary and ancillary development tools
+If you have a Node project, are you tired of monotonous tasks:
 
-Use Case / User Story
+- Integrating Husky/pre-commit with applicable bullets
+- Integrating lint-staged
+- Running Jest/Ava tests and generating code coverage
+- Hooking up Prettier/eslint linting
+- Automatically versioning each build
+- Uploading build artifacts to a particular registry
+- Create a documentation website
+- Creating/building/uploading Docker images
+- Configuring CI
+- etc.
 
-# TODO
+If you have a Go project, are you tired of monotonous tasks:
 
-Jim sets up a quick programing project with $LANGUAGE. Within tens of minutes, they are ready to ship the first version. However, setting up a build pipeline takes longer than it took to build the first version. Boilerplate solutions like `cookiecutter` and `yeoman` help, but they have their own APIs, doesn't update if you make any improvements (ex. for example if you want to integrate docker, you have to re-copy boilerplate Dockerfiles or docker-compose.yml scripts to those projects)
+- Setting up goreleaser
+- Integrating Husky/pre-commit with applicable bullets
+- Running tests
+- Hooking up golangci-lint
+- Automatically versioning each build
+- Creating/building/uploading Docker images
+- Configuring CI
+- etc.
 
-`zest` automates that. It copies boilerplate build, lint, testing, etc. shell script files to your project, and any chanages in the original will be reflected (via copy). It has clean escape hatches so you can just define your own linting script, or easily define scripts to run when you `just build`
+Indeed, `cookiecutter`, `yeoman`, and project template generators help, but if you want to add functionality to the boilerplate files, you have to add it to every single project manually (as well, of course, to the boilerplate repository/directory) since localized configuration drift is inveitable.
 
-# TODO: make paths absolute to project directory, rather than based on cwd
+If you use `glue` and wish to add functionality that is generalized enough for most projects of a particular language, simply edit the boilerplate, and run a command in each project for new changes to reflect. They are reflected in the `.glue` folder, which resides at project root. Some features of `glue` include
+
+- Easy escape hatches are provided if you wish to overide or modify any generalizations
+- Written in pure Bash
+- Configuration decoupled from traditional locations of configuration (everything is isolated in `.glue`)
+
+### Details
+
+CURRENT STATE: PRE-ALPHA
+
+The generalized want of the aforementioned issues include a pre-configured way to `build`, run `ci`, `release`, and `deploy` your programming project. Each pre-configuration (ex. bash executable) is usually taylored to a particular programming language and uses abstracts of running actual actual commands, like `eslint`, or `clang-tidy`. For example, a Node `glue release` command runs a bash executable, which in turn, executes another shell script that actually runs `npm build` and `npm release`. The primary purpose of this shell script intermetiary layer is to increase composability and parameterize the running of the underlying command, if sufficient warranty exists. This may be useful, for example (albeit quite contrived), if you wish to use [prettier](https://prettier.io) for a Node project, but reuse that invocation script for a Java project.
+
+Configuration is separated in three subfolders of `.glue`: `actions`, `commands`, and `config`. Each folder represents a major portion of execution flow within the program. When you run something like `glue build` for a `node` project, it scours the `./glue/commands` directory for the following files, in order: `['node-build-before.sh', 'node-build.sh', 'node-build-after.sh', 'build-before.sh', 'build.sh', 'build-after.sh]` (other executables like `node-build.py` are interchangeable, at least in theory). A particular one of those executables might contain an invocation to a file like `actually-do-npm-build.sh`, or `actually-exec-prettier.sh` which will reside in `./.glue/actions`. These shell scripts, in turn, read configuration located in `./.glue/config` such as `prettier.config.json` or `goreleaser.yml`
