@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 
-load ./test_utils
+# load ./test_utils
 source ../lib/helper.sh
 source ../lib/util.sh
 

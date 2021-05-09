@@ -23,6 +23,7 @@ If you have a Go project, are you tired of monotonous tasks:
 - Hooking up golangci-lint
 - Automatically versioning each build
 - Creating/building/uploading Docker images
+- Packaging/Distributing your app in the form of a Snap, Debian package, AppImage, etc.
 - Configuring CI
 - etc.
 
