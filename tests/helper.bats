@@ -4,7 +4,7 @@
 source ../lib/helper.sh
 source ../lib/util.sh
 
-@test "util_get_subcommand" {
+@test "helper_get_subcommand" {
 	local input result expected
 	local -A tests=(
 		# subcommand alone
@@ -23,7 +23,7 @@ source ../lib/util.sh
 	for i in "${!tests[@]}"; do
 		input="$i"
 		expected="${tests[$i]}"
-		result="$(util_get_subcommand "$input")"
+		result="$(helper_get_subcommand "$input")"
 
 		# {
 		# 	echo ---
@@ -36,7 +36,7 @@ source ../lib/util.sh
 	done
 }
 
-@test "util_get_lang" {
+@test "helper_get_lang" {
 	local input result expected
 	local -A tests=(
 		# subcommand alone
@@ -55,7 +55,7 @@ source ../lib/util.sh
 	for i in "${!tests[@]}"; do
 		input="$i"
 		expected="${tests[$i]}"
-		result="$(util_get_lang "$input")"
+		result="$(helper_get_lang "$input")"
 
 		# {
 		# 	echo ---
@@ -68,7 +68,7 @@ source ../lib/util.sh
 	done
 }
 
-@test "util_get_when" {
+@test "helper_get_when" {
 	local input result expected
 	local -A tests=(
 		# subcommand alone
@@ -87,7 +87,7 @@ source ../lib/util.sh
 	for i in "${!tests[@]}"; do
 		input="$i"
 		expected="${tests[$i]}"
-		result="$(util_get_when "$input")"
+		result="$(helper_get_when "$input")"
 
 		# {
 		# 	echo ---
@@ -100,13 +100,13 @@ source ../lib/util.sh
 	done
 }
 
-@test "util_sort_files_by_when" {
+@test "helper_sort_files_by_when" {
 
 	# 1
 	local -a input=('build-before.sh' 'build.sh')
 	local -a expected=('build-before.sh' 'build.sh')
 	local -a result
-	readarray -d $'\0' result < <(util_sort_files_by_when "${input[@]}")
+	readarray -d $'\0' result < <(helper_sort_files_by_when "${input[@]}")
 
 	# ensure equivalency
 	[[ ${#expected[@]} == "${#result[@]}" ]]
@@ -119,7 +119,7 @@ source ../lib/util.sh
 	local -a input=('build-go-after.sh' 'build-go-before.sh' 'build-go.sh')
 	local -a expected=('build-go-before.sh' 'build-go.sh' 'build-go-after.sh')
 	local -a result
-	readarray -d $'\0' result < <(util_sort_files_by_when "${input[@]}")
+	readarray -d $'\0' result < <(helper_sort_files_by_when "${input[@]}")
 
 	# ensure equivalency
 	[[ ${#expected[@]} == "${#result[@]}" ]]
@@ -128,14 +128,14 @@ source ../lib/util.sh
 	done
 }
 
-@test "util_get_command_and_lang_scripts" {
+@test "helper_get_command_and_lang_scripts" {
 	local dir
 
 	dir="$PWD/mocks/util-source-commands"
 
 	# 1
 	local -a result
-	readarray -d $'\0' result < <(util_get_command_and_lang_scripts "build" "go" "$dir")
+	readarray -d $'\0' result < <(helper_get_command_and_lang_scripts "build" "go" "$dir")
 
 	# echo "${result[@]}" >&3
 }

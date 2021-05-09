@@ -7,7 +7,7 @@ source "$SRCDIR/lib/helper.sh"
 source "$SRCDIR/lib/util.sh"
 
 # working directory
-WD="$(util_get_wd)" || exit
+WD="$(helper_get_wd)" || exit
 
 main() {
 	[[ -z $1 ]] && die "No subcommand passed"
