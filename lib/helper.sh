@@ -1,7 +1,6 @@
 # shellcheck shell=bash
 
 helper_get_wd() (
-	# TODO: glue.sh to toml
 	while [[ ! -f "glue.sh" && "$PWD" != / ]]; do
 		cd ..
 	done
@@ -71,32 +70,6 @@ helper_get_when() {
 	fi
 }
 
-# this sorts an array of files by when. we assume files have a valid structure
-helper_sort_files_by_when() {
-	ensure_fn_args 'helper_sort_files_by_when' '1' "$@" || return
-
-	local beforeFile duringFile afterFile
-
-	for file; do
-		if [[ $file =~ .*?-before ]]; then
-			beforeFile="$file"
-		elif [[ $file =~ .*?-after ]]; then
-			afterFile="$file"
-		else
-			duringFile="$file"
-		fi
-	done
-
-	for file in "$beforeFile" "$duringFile" "$afterFile"; do
-		# remove whitespace
-		file="$(<<< "$file" awk '{ $1=$1; print }')"
-
-		if [[ -n $file ]]; then
-			printf "%s\0" "$file"
-		fi
-	done
-}
-
 # run each command that is language-specific. then
 # run the generic version of a particular command. for each one,
 # only run the-user command file is one in 'auto' isn't present
@@ -164,12 +137,14 @@ helper_run_a_relevant_script() {
 	shoptExitStatus="$?"
 	shopt -s nullglob
 
-	# TODO: cleanup
+	# although the following could be shortened, it is a bit more verbose
+	# so we can check if there are duplicate files and warn the user
+
 	# run the file, if it exists (override)
 	local hasRanFile=no
 	for file in "$commandDir/${projectType}${task}${when}".*?; do
 		if [[ $hasRanFile = yes ]]; then
-			log_error "Duplicate file '$file' should not exist"
+			log_warn "Duplicate file '$file' should not exist"
 			break
 		fi
 
@@ -187,7 +162,7 @@ helper_run_a_relevant_script() {
 	# if no files were ran, run the auto file, if it exists
 	for file in "$commandDir/auto/${projectType}${task}${when}".*?; do
 		if [[ $hasRanFile = yes ]]; then
-			log_error "Duplicate file '$file' should not exist"
+			log_warn "Duplicate file '$file' should not exist"
 			break
 		fi
 
