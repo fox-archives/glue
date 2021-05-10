@@ -5,18 +5,25 @@ doSync() {
 		die 'rsync not installed'
 	}
 
-	for dir in actions commands config; do
-		mkdir -p "$GLUE_STORE/$dir/"
-		mkdir -p "$WD/.glue/$dir/auto/"
+	# source the configuration file
+	local glueFile="$WD/glue.sh"
+	helper_source_config "$glueFile" # exposes: languages
 
-		rsync -av --delete --progress "$GLUE_STORE/$dir/" "$WD/.glue/$dir/auto/"
+	# TODO: only copy files relevant to current languages (and general ones)
+	for language in $languages; do
+		rsync -av --delete --progress --exclude '*-*-*' --include "*-$language-*" \
+			"$GLUE_STORE/" "$WD/.glue/"
 	done
+
+
 }
 
 doCmd() {
-	# source the configuration fi le
+	[[ -z $1 ]] && die 'No subcommand found'
+
+	# source the configuration file
 	local glueFile="$WD/glue.sh"
-	helper_source_config "$glueFile"
+	helper_source_config "$glueFile" # exposes: languages
 
 	# get subcommand, and language (if applicable)
 	local subcommand lang
@@ -25,9 +32,16 @@ doCmd() {
 
 	local commandDir="$WD/.glue/commands"
 	if [[ -z $lang ]]; then
-		# no specific language. run everything
-		helper_get_command_scripts "$subcommand" "$GLUE_LANG" "$commandDir"
+		# no specific language on cli. run all specified languages
+		# as per config
+		[[ -z $languages ]] && {
+			die "'languages' is not set. Please specify in 'glue.sh'"
+			return
+		}
+		helper_get_command_scripts "$subcommand" "$languages" "$commandDir"
 	else
+
+
 		# run only the command specific to a language
 		helper_get_command_and_lang_scripts "$subcommand" "$lang" "$commandDir"
 	fi
