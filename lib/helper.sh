@@ -12,18 +12,6 @@ helper_get_wd() (
 	printf "%s" "$PWD"
 )
 
-helper_source_config() {
-	ensure_fn_args 'helper_source_config' '1' "$@" || return
-
-	glueFile="$1"
-
-	ensure_file_exists "$glueFile"
-	set -a
-	# shellcheck disable=SC1090
-	. "$glueFile"
-	set +a
-}
-
 # the name of a task of a particular projectType
 helper_get_task() {
 	ensure_fn_args 'helper_get_task' '1' "$@" || return

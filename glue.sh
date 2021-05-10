@@ -12,11 +12,18 @@ WD="$(helper_get_wd)" || exit
 main() {
 	[[ -z $1 ]] && die "No subcommand passed"
 
-	# run init
+	# run global init
 	local initFile="${GLUE_INIT_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/glue/init.sh}"
-	[[ -f $initFile ]] && source "$initFile"
+	[[ -f $initFile ]] && source "$initFile" # exposes: store
 
-	GLUE_STORE="${GLUE_STORE:-${store:-$HOME/.glue-store}}"
+	readonly GLUE_STORE="${GLUE_STORE:-${store:-$HOME/.glue-store}}"
+
+	# run local init
+	local glueFile="$WD/glue.sh"
+	[[ -f $initFile ]] && source "$glueFile" # exposes: using
+
+	# shellcheck disable=SC2034
+	declare -ra GLUE_USING=("${using[@]}")
 
 	# actual subcommand to this script
 	case "$1" in

@@ -2,7 +2,7 @@
 
 Glue is the manifestation of a generalized task runner with respect to language agnosticity
 
-If you have a Node project, are you tired of monotonous tasks:
+If you have a Node project, are you tired of the following monotonous tasks?
 
 - Integrating Husky/pre-commit with applicable bullets
 - Integrating lint-staged
@@ -15,7 +15,7 @@ If you have a Node project, are you tired of monotonous tasks:
 - Configuring CI
 - etc.
 
-If you have a Go project, are you tired of monotonous tasks:
+If you have a Go project, are you tired of the following monotonous tasks?
 
 - Setting up goreleaser
 - Integrating Husky/pre-commit with applicable bullets

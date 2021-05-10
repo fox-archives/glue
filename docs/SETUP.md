@@ -1,5 +1,24 @@
 # SETUP.md
 
+## Global Configuration
+
+It is recommended to create a file at `~/.config/glue/init.sh`, containing the location of your Glue store.
+
+```bash
+readonly store="$HOME/repos/glue-store"
+```
+
+## Local Configuration
+
+For every project you wish to manage with `Glue`, create a `glue.sh` at the root of the directory, that contains which template types / project types you wish to use. These are ran in order when you execute a task without a specific template type / project type
+
+```bash
+# shellcheck shell=bash
+
+# shellcheck disable=SC2034
+readonly using=("NodeJS_Server" "Python")
+```
+
 ## Environment Variables
 
 - `GLUE_INIT_FILE`
@@ -8,17 +27,3 @@
 
 - `GLUE_STORE`
   - default: `~/.glue-store` (this should be set in the init file)
-
-## Init file
-
-This is sourced near the beginning of the script. Set the following variables
-
-`store`
-
-- set the store path
-
-### Example
-
-```bash
-readonly store="$HOME/repos/glue-store"
-```
