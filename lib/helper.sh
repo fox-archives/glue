@@ -110,16 +110,18 @@ helper_sort_files_by_when() {
 # run the generic version of a particular command. for each one,
 # only run the-user command file is one in 'auto' isn't present
 helper_get_command_scripts() {
-	ensure_fn_args 'helper_get_command_and_lang_scripts' '1 2 3' "$@" || return
-
+	ensure_fn_args 'helper_get_command_scripts' '1 2 3' "$@" || return
 	local subcommand="$1"
 	local langs="$2"
 	local dir="$3"
 
 	shopt -q nullglob
 	shoptExitStatus="$?"
-
 	shopt -s nullglob
+
+	local hasRan=no
+
+	# prepend hypthen for each language
 	local newLangs
 	for l in $langs; do
 		newLangs+="-$l "
@@ -132,9 +134,15 @@ helper_get_command_scripts() {
 			# this either runs the 'auto' script or the user-override, depending
 			# on whether which ones are present
 			helper_run_a_relevant_script "$subcommand" "$dir" "$lang" "$when"
+			if [[ $? -eq 0 ]]; then
+				hasRan=yes
+			fi
 		done
 	done
 
+	if [[ $hasRan == no ]]; then
+		die "Particular subcommand '$subcommand' did not run any files"
+	fi
 
 	(( shoptExitStatus != 0 )) && shopt -u nullglob
 }
@@ -145,12 +153,20 @@ helper_get_command_and_lang_scripts() {
 	local subcommand="$1"
 	local lang="$2"
 	local dir="$3"
+	local hasRan=no
 
 	for when in -before '' -after; do
 		# this either runs the 'auto' script or the user-override, depending
 		# on whether which ones are present
 		helper_run_a_relevant_script "$subcommand" "$dir" "-$lang" "$when"
+		if [[ $? -eq 0 ]]; then
+			hasRan=yes
+		fi
 	done
+
+	if [[ $hasRan == no ]]; then
+		die "Particular subcommand '$subcommand' did not run any files"
+	fi
 }
 
 helper_run_a_relevant_script() {
@@ -195,4 +211,8 @@ helper_run_a_relevant_script() {
 	done
 
 	(( shoptExitStatus != 0 )) && shopt -u nullglob
+
+	if [[ $hasRanFile == no ]]; then
+		return 1
+	fi
 }
