@@ -72,7 +72,7 @@ doCmd() {
 
 	# source the configuration file
 	local glueFile="$WD/glue.sh"
-	helper_source_config "$glueFile" # exposes: languages
+	helper_source_config "$glueFile" # exposes: using
 
 	# *this* task is the specific task like 'build', 'ci', etc., even tough
 	# we still call $1 a 'task'
@@ -84,13 +84,14 @@ doCmd() {
 	if [[ -z $projectType ]]; then
 		# no specific language on cli. run all specified languages
 		# as per config
-		[[ -z $languages ]] && {
-			die "Please set 'languages' in the Glue project configuration (glue.sh)"
+		[[ ! -v using ]] && {
+			die "Please set 'using' in the Glue project configuration (glue.sh)"
 			return
 		}
-		helper_get_command_scripts "$task" "$languages" "$commandDir"
+
+		helper_run_task_scripts "$task" "$commandDir" "${using[@]}"
 	else
 		# run only the command specific to a language
-		helper_get_command_and_lang_scripts "$task" "$projectType" "$commandDir"
+		helper_run_task_and_projectType_scripts "$task" "$commandDir" "$projectType"
 	fi
 }

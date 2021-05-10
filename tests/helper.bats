@@ -100,42 +100,43 @@ source ../lib/util.sh
 	done
 }
 
-# @test "helper_sort_files_by_when" {
+# TODO: dead code
+@test "helper_sort_files_by_when" {
 
-# 	# 1
-# 	local -a input=('build-before.sh' 'build.sh')
-# 	local -a expected=('build-before.sh' 'build.sh')
-# 	local -a result
-# 	readarray -d $'\0' result < <(helper_sort_files_by_when "${input[@]}")
+	# 1
+	local -a input=('build-before.sh' 'build.sh')
+	local -a expected=('build-before.sh' 'build.sh')
+	local -a result
+	readarray -d $'\0' result < <(helper_sort_files_by_when "${input[@]}")
 
-# 	# ensure equivalency
-# 	[[ ${#expected[@]} == "${#result[@]}" ]]
-# 	for i in "${!result[@]}"; do
-# 		[[ ${expected[$i]} == "${result[$i]}" ]]
-# 	done
+	# ensure equivalency
+	[[ ${#expected[@]} == "${#result[@]}" ]]
+	for i in "${!result[@]}"; do
+		[[ ${expected[$i]} == "${result[$i]}" ]]
+	done
 
 
-# 	# 2
-# 	local -a input=('build-go-after.sh' 'build-go-before.sh' 'build-go.sh')
-# 	local -a expected=('build-go-before.sh' 'build-go.sh' 'build-go-after.sh')
-# 	local -a result
-# 	readarray -d $'\0' result < <(helper_sort_files_by_when "${input[@]}")
+	# 2
+	local -a input=('build-go-after.sh' 'build-go-before.sh' 'build-go.sh')
+	local -a expected=('build-go-before.sh' 'build-go.sh' 'build-go-after.sh')
+	local -a result
+	readarray -d $'\0' result < <(helper_sort_files_by_when "${input[@]}")
 
-# 	# ensure equivalency
-# 	[[ ${#expected[@]} == "${#result[@]}" ]]
-# 	for i in "${!result[@]}"; do
-# 		[[ ${expected[$i]} == "${result[$i]}" ]]
-# 	done
-# }
+	# ensure equivalency
+	[[ ${#expected[@]} == "${#result[@]}" ]]
+	for i in "${!result[@]}"; do
+		[[ ${expected[$i]} == "${result[$i]}" ]]
+	done
+}
 
-# @test "helper_get_command_and_lang_scripts" {
-# 	local dir
+@test "helper_run_task_and_projectType_scripts" {
+	local dir
 
-# 	dir="$PWD/mocks/util-source-commands"
+	dir="$PWD/mocks/util-source-commands"
 
-# 	# 1
-# 	local -a result
-# 	readarray -d $'\0' result < <(helper_get_command_and_lang_scripts "build" "go" "$dir")
+	# 1
+	local -a result
+	readarray -d $'\0' result < <(helper_run_task_and_projectType_scripts "build" "go" "$dir")
 
-# 	# echo "${result[@]}" >&3
-# }
+	# echo "${result[@]}" >&3
+}
