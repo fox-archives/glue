@@ -4,26 +4,26 @@
 source ../lib/helper.sh
 source ../lib/util.sh
 
-@test "helper_get_subcommand" {
+@test "helper_get_task" {
 	local input result expected
 	local -A tests=(
-		# subcommand alone
+		# task and projectName
+		[Go.build]=build
+
+		# task and lang and when
+		[Go.build-after]=build
+
+		# task alone
 		[build]=build
 
-		# subcommand and lang
-		[build-go]=build
-
-		# subcommand and when
+		# task and when
 		[build-before]=build
-
-		# subcommand and lang and when
-		[build-go-after]=build
 	)
 
 	for i in "${!tests[@]}"; do
 		input="$i"
 		expected="${tests[$i]}"
-		result="$(helper_get_subcommand "$input")"
+		result="$(helper_get_task "$input")"
 
 		# {
 		# 	echo ---
@@ -36,26 +36,26 @@ source ../lib/util.sh
 	done
 }
 
-@test "helper_get_lang" {
+@test "helper_get_projectType" {
 	local input result expected
 	local -A tests=(
-		# subcommand alone
+		# task and projectName
+		[Go.build]=Go
+
+		# task and lang and when
+		[Go.build-after]=Go
+
+		# task alone
 		[build]=
 
-		# subcommand and lang
-		[build-go]=go
-
-		# subcommand and when
+		# task and when
 		[build-before]=
-
-		# subcommand and lang and when
-		[build-go-after]=go
 	)
 
 	for i in "${!tests[@]}"; do
 		input="$i"
 		expected="${tests[$i]}"
-		result="$(helper_get_lang "$input")"
+		result="$(helper_get_projectType "$input")"
 
 		# {
 		# 	echo ---
@@ -71,17 +71,17 @@ source ../lib/util.sh
 @test "helper_get_when" {
 	local input result expected
 	local -A tests=(
-		# subcommand alone
+		# task and projectName
+		[Go.build]=
+
+		# task and lang and when
+		[Go.build-after]=after
+
+		# task alone
 		[build]=
 
-		# subcommand and lang
-		[build-go]=
-
-		# subcommand and when
+		# task and when
 		[build-before]=before
-
-		# subcommand and lang and when
-		[build-go-after]=after
 	)
 
 	for i in "${!tests[@]}"; do
@@ -100,42 +100,42 @@ source ../lib/util.sh
 	done
 }
 
-@test "helper_sort_files_by_when" {
+# @test "helper_sort_files_by_when" {
 
-	# 1
-	local -a input=('build-before.sh' 'build.sh')
-	local -a expected=('build-before.sh' 'build.sh')
-	local -a result
-	readarray -d $'\0' result < <(helper_sort_files_by_when "${input[@]}")
+# 	# 1
+# 	local -a input=('build-before.sh' 'build.sh')
+# 	local -a expected=('build-before.sh' 'build.sh')
+# 	local -a result
+# 	readarray -d $'\0' result < <(helper_sort_files_by_when "${input[@]}")
 
-	# ensure equivalency
-	[[ ${#expected[@]} == "${#result[@]}" ]]
-	for i in "${!result[@]}"; do
-		[[ ${expected[$i]} == "${result[$i]}" ]]
-	done
+# 	# ensure equivalency
+# 	[[ ${#expected[@]} == "${#result[@]}" ]]
+# 	for i in "${!result[@]}"; do
+# 		[[ ${expected[$i]} == "${result[$i]}" ]]
+# 	done
 
 
-	# 2
-	local -a input=('build-go-after.sh' 'build-go-before.sh' 'build-go.sh')
-	local -a expected=('build-go-before.sh' 'build-go.sh' 'build-go-after.sh')
-	local -a result
-	readarray -d $'\0' result < <(helper_sort_files_by_when "${input[@]}")
+# 	# 2
+# 	local -a input=('build-go-after.sh' 'build-go-before.sh' 'build-go.sh')
+# 	local -a expected=('build-go-before.sh' 'build-go.sh' 'build-go-after.sh')
+# 	local -a result
+# 	readarray -d $'\0' result < <(helper_sort_files_by_when "${input[@]}")
 
-	# ensure equivalency
-	[[ ${#expected[@]} == "${#result[@]}" ]]
-	for i in "${!result[@]}"; do
-		[[ ${expected[$i]} == "${result[$i]}" ]]
-	done
-}
+# 	# ensure equivalency
+# 	[[ ${#expected[@]} == "${#result[@]}" ]]
+# 	for i in "${!result[@]}"; do
+# 		[[ ${expected[$i]} == "${result[$i]}" ]]
+# 	done
+# }
 
-@test "helper_get_command_and_lang_scripts" {
-	local dir
+# @test "helper_get_command_and_lang_scripts" {
+# 	local dir
 
-	dir="$PWD/mocks/util-source-commands"
+# 	dir="$PWD/mocks/util-source-commands"
 
-	# 1
-	local -a result
-	readarray -d $'\0' result < <(helper_get_command_and_lang_scripts "build" "go" "$dir")
+# 	# 1
+# 	local -a result
+# 	readarray -d $'\0' result < <(helper_get_command_and_lang_scripts "build" "go" "$dir")
 
-	# echo "${result[@]}" >&3
-}
+# 	# echo "${result[@]}" >&3
+# }

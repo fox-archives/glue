@@ -25,43 +25,31 @@ helper_source_config() {
 	set +a
 }
 
-# the name of a subcommand
-helper_get_subcommand() {
-	ensure_fn_args 'helper_get_subcommand' '1' "$@" || return
+# the name of a task of a particular projectType
+helper_get_task() {
+	ensure_fn_args 'helper_get_task' '1' "$@" || return
 
-	local subcommand
-	subcommand="${1%%-*}"
+	local task="$1"
 
-	printf "%s" "$subcommand"
+	task="${task##*.}"
+	task="${task%%-*}"
+
+	printf "%s" "$task"
 }
 
-# the language a subcommand is for (if any)
-helper_get_lang() {
-	ensure_fn_args 'helper_get_lang' '1' "$@" || return
+# the identifier of the script aggregation
+helper_get_projectType() {
+	ensure_fn_args 'helper_get_projectType' '1' "$@" || return
 
-	local lang="$1"
+	local projectType="$1"
 
-	# if there is no hypthen, then it only contains a subcommand
-	if ! [[ $lang == *-* ]]; then
+	# projectType exists iff . exists
+	if [[ $projectType == *.* ]]; then
+		projectType="${projectType%%.*}"
+		printf "%s" "$projectType"
+	else
 		printf ''
 		return
-	fi
-
-	lang="${1#*-}"
-
-	if [[ $lang == *-* ]]; then
-	# if it still contains a hypthen, then it is a lang-when (ex. go-after)
-		lang="${lang%%-*}"
-
-		printf "%s" "$lang"
-	else
-	# no hypen, so $lang is either a lang, or when
-		if [[ $lang =~ (before|after) ]]; then
-			# if is a 'when', return nothing because there is no lang
-			printf ''
-		else
-			printf "%s" "$lang"
-		fi
 	fi
 }
 
@@ -71,9 +59,12 @@ helper_get_when() {
 
 	local when="$1"
 
-	when="${when##*-}"
+	if [[ $when == *.* ]]; then
+		when="${when##*.}"
+	fi
 
-	if [[ $when =~ (before|after) ]]; then
+	if [[ $when == *-* ]]; then
+		when="${when##*-}"
 		printf "%s" "$when"
 	else
 		printf ''

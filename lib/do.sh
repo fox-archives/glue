@@ -1,9 +1,14 @@
 # shellcheck shell=bash
 
 doSync() {
-	command -v rsync &>/dev/null || {
-		die 'rsync not installed'
-	}
+	#
+	# ─── COPY COMMANDS ──────────────────────────────────────────────────────────────
+	#
+
+
+	# command -v rsync &>/dev/null || {
+	# 	die 'rsync not installed'
+	# }
 	# TODO: cleanup
 	# source the configuration file
 	local glueFile="$WD/glue.sh"
@@ -22,13 +27,13 @@ doSync() {
 		fi
 
 	done
-	actualsubcommands="${actualsubcommands:: -1}"
+	[[ -n ${actualsubcommands::1} ]] && actualsubcommands="${actualsubcommands:: -1}"
 
 	# all applicable languages
 	for language in $languages; do
 		langRegex+="$language|"
 	done
-	langRegex="${langRegex:: -1}"
+	[[ -n ${langRegex::1} ]] && langRegex="${langRegex:: -1}"
 
 
 	find "$WD/.glue/commands" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -print0 | xargs -r0 rm
@@ -55,34 +60,37 @@ doSync() {
 	# 		"$GLUE_STORE/commands" "$WD/.glue/commands"
 	# done
 
+	#
+	# ─── COPY ACTIONS ───────────────────────────────────────────────────────────────
+	#
+
 
 }
 
 doCmd() {
-	[[ -z $1 ]] && die 'No subcommand found'
+	[[ -z $1 ]] && die 'No task passed'
 
 	# source the configuration file
 	local glueFile="$WD/glue.sh"
 	helper_source_config "$glueFile" # exposes: languages
 
-	# get subcommand, and language (if applicable)
-	local subcommand lang
-	subcommand="$(helper_get_subcommand "$1")" || return
-	lang="$(helper_get_lang "$1")" || return
+	# *this* task is the specific task like 'build', 'ci', etc., even tough
+	# we still call $1 a 'task'
+	local projectType task
+	task="$(helper_get_task "$1")" || return
+	projectType="$(helper_get_projectType "$1")" || return
 
 	local commandDir="$WD/.glue/commands"
-	if [[ -z $lang ]]; then
+	if [[ -z $projectType ]]; then
 		# no specific language on cli. run all specified languages
 		# as per config
 		[[ -z $languages ]] && {
-			die "'languages' is not set. Please specify in 'glue.sh'"
+			die "Please set 'languages' in the Glue project configuration (glue.sh)"
 			return
 		}
-		helper_get_command_scripts "$subcommand" "$languages" "$commandDir"
+		helper_get_command_scripts "$task" "$languages" "$commandDir"
 	else
-
-
 		# run only the command specific to a language
-		helper_get_command_and_lang_scripts "$subcommand" "$lang" "$commandDir"
+		helper_get_command_and_lang_scripts "$task" "$projectType" "$commandDir"
 	fi
 }
