@@ -1,5 +1,8 @@
 # shellcheck shell=bash
 
+# Get the current working directory of the project. We
+# use this so we can get an absolute path to the current
+# project (rather than being relative to `$PWD`)
 helper_get_wd() (
 	while [[ ! -f "glue.sh" && "$PWD" != / ]]; do
 		cd ..
@@ -12,7 +15,7 @@ helper_get_wd() (
 	printf "%s" "$PWD"
 )
 
-# the name of a task of a particular projectType
+# Return the name of the 'task'
 helper_get_task() {
 	ensure_fn_args 'helper_get_task' '1' "$@" || return
 
@@ -24,7 +27,7 @@ helper_get_task() {
 	printf "%s" "$task"
 }
 
-# the identifier of the script aggregation
+# Return the name of the 'projectType'
 helper_get_projectType() {
 	ensure_fn_args 'helper_get_projectType' '1' "$@" || return
 
@@ -40,7 +43,7 @@ helper_get_projectType() {
 	fi
 }
 
-# when a subcommand runs
+# Return the name of 'when'
 helper_get_when() {
 	ensure_fn_args 'helper_get_when' '1' "$@" || return
 
@@ -58,9 +61,34 @@ helper_get_when() {
 	fi
 }
 
-# run each command that is language-specific. then
-# run the generic version of a particular command. for each one,
-# only run the-user command file is one in 'auto' isn't present
+# Checks to see if a valid executable exists at a location.
+# For example, when passed in 'some-file', it may return 'some-file.py'
+# or 'some-file.sh', depending on what is in the directory
+helper_get_executable_file() {
+	ensure_fn_args 'helper_get_executable_file' '1' "$@" || return
+	local file="$1"
+
+	hasRanFile=no
+	firstFileMatch=
+	for aFileMatch in "$file".*?; do
+		if [[ $hasRanFile = yes ]]; then
+			log_warn "Both '$aFileMatch' and '$firstFileMatch' should not exist"
+			break
+		fi
+
+		hasRanFile=yes
+		firstFileMatch="$aFileMatch"
+	done
+
+	if [[ ! -x $firstFileMatch ]]; then
+		log_warn "File '$firstFileMatch' will be executed, but it is not marked as executable"
+	fi
+
+	printf "%s" "$firstFileMatch"
+}
+
+# Run the tasks for each language, in order, according to the variable
+# 'using' in `glue.sh`. Then, run the generalized version of each task
 helper_run_task_scripts() {
 	ensure_fn_args 'helper_run_task_scripts' '1 2 3' "$@" || return
 	local task="$1"
@@ -92,7 +120,7 @@ helper_run_task_scripts() {
 	fi
 }
 
-# only run a language specific version of a command
+# Run the tasks for a particular language
 helper_run_task_and_projectType_scripts() {
 	ensure_fn_args 'helper_run_task_and_projectType_scripts' '1 2 3' "$@" || return
 	local task="$1"
@@ -125,8 +153,8 @@ helper_run_a_relevant_script() {
 	shoptExitStatus="$?"
 	shopt -s nullglob
 
-	# although the following could be shortened, it is a bit more verbose
-	# so we can check if there are duplicate files and warn the user
+	# Although the following could be shortened, it's longer
+	# because we checkif there are duplicate files and warn the user
 
 	# run the file, if it exists (override)
 	local hasRanFile=no
@@ -137,7 +165,7 @@ helper_run_a_relevant_script() {
 		fi
 
 		hasRanFile=yes
-		exec_file "$file"
+		exec_file "$file" "no"
 	done
 
 	# we ran the user file, which overrides the auto file
@@ -148,6 +176,7 @@ helper_run_a_relevant_script() {
 	fi
 
 	# if no files were ran, run the auto file, if it exists
+	# TODO: helper_get_executable_file
 	for file in "$commandDir/auto/${projectType}${task}${when}".*?; do
 		if [[ $hasRanFile = yes ]]; then
 			log_warn "Duplicate file '$file' should not exist"
@@ -155,7 +184,7 @@ helper_run_a_relevant_script() {
 		fi
 
 		hasRanFile=yes
-		exec_file "$file"
+		exec_file "$file" "yes"
 	done
 
 	(( shoptExitStatus != 0 )) && shopt -u nullglob

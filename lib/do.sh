@@ -5,7 +5,6 @@ doSync() {
 	mkdir -p "$WD/.glue/commands/auto/"
 	find "$WD/.glue/commands/auto/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -print0 | xargs -r0 rm
 
-
 	local projectTypeStr
 	for projectType in "${GLUE_USING[@]}"; do
 		projectTypeStr="${projectTypeStr}${projectType}\|"

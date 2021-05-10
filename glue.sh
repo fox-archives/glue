@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -Eo pipefail
 
 # source code directory
 SRCDIR="$(dirname "$(cd "$(dirname "$0")"; pwd -P)/$(basename "$0")")" || die 'Irrecoverable failure'
@@ -12,18 +13,46 @@ WD="$(helper_get_wd)" || exit
 main() {
 	[[ -z $1 ]] && die "No subcommand passed"
 
-	# run global init
+	GLUE_ACTIONS_DIR="$WD/.glue/actions/auto"
+	GLUE_COMMANDS_DIR="$WD/.glue/commands/auto"
+	GLUE_CONFIG_DIR="$WD/.glue/config/auto"
+
+
+	# ----------------- Global Init (init.sh) ---------------- #
 	local initFile="${GLUE_INIT_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/glue/init.sh}"
 	[[ -f $initFile ]] && source "$initFile" # exposes: store
 
 	readonly GLUE_STORE="${GLUE_STORE:-${store:-$HOME/.glue-store}}"
+	unset -v store
 
-	# run local init
+
+	# -------------- Store Init (*.boostrap.sh) -------------- #
+	local commandsBootstrapFile actionsBootstrapFile
+
+	commandsBootstrapFile="$(helper_get_executable_file "$GLUE_STORE/commands.bootstrap")"
+	GLUE_BOOTSTRAP_COMMANDS="$(
+		GLUE_ACTIONS_DIR="$GLUE_ACTIONS_DIR" \
+				GLUE_COMMANDS_DIR="$GLUE_COMMANDS_DIR" \
+				GLUE_CONFIG_DIR="$GLUE_CONFIG_DIR" \
+				"$commandsBootstrapFile"
+	)" || die "Could not execute '$commandsBootstrapFile' successfully"
+
+	actionsBootstrapFile="$(helper_get_executable_file "$GLUE_STORE/actions.bootstrap")"
+	GLUE_BOOTSTRAP_ACTIONS="$(
+		GLUE_ACTIONS_DIR="$GLUE_ACTIONS_DIR" \
+				GLUE_COMMANDS_DIR="$GLUE_COMMANDS_DIR" \
+				GLUE_CONFIG_DIR="$GLUE_CONFIG_DIR" \
+				"$actionsBootstrapFile"
+	)" || die "Could not execute '$actionsBootstrapFile' successfully"
+
+
+	# ----------------- Local Init (glue.sh) ----------------- #
 	local glueFile="$WD/glue.sh"
 	[[ -f $initFile ]] && source "$glueFile" # exposes: using
 
 	# shellcheck disable=SC2034
 	declare -ra GLUE_USING=("${using[@]}")
+	unset -v using
 
 	# actual subcommand to this script
 	case "$1" in

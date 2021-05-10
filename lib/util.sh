@@ -47,8 +47,9 @@ ensure_file_exists() {
 # execs a file if it exists, but prints a warning if
 # the file is there, but not executable
 exec_file() {
-	ensure_fn_args 'exec_file' '1' "$@" || return
+	ensure_fn_args 'exec_file' '1 2' "$@" || return
 	file="$1"
+	isAuto="$2"
 
 	if [[ ${file::1} != / && ${file::2} != ./ ]]; then
 		file="./$file"
@@ -56,10 +57,17 @@ exec_file() {
 
 	if [ -f "$file" ]; then
 		if [ -x "$file" ]; then
-			"$file"
+			# shellcheck disable=SC2097
+			GLUE_ACTIONS_DIR="$GLUE_ACTIONS_DIR" \
+					GLUE_COMMANDS_DIR="$GLUE_COMMANDS_DIR" \
+					GLUE_CONFIG_DIR="$GLUE_CONFIG_DIR" \
+					GLUE_BOOTSTRAP_COMMANDS="$GLUE_BOOTSTRAP_COMMANDS" \
+					GLUE_BOOTSTRAP_ACTIONS="$GLUE_BOOTSTRAP_ACTIONS" \
+					GLUE_IS_AUTO="$isAuto" \
+					"$file"
 			return
 		else
-			log_warn "File '$file' exists, but is not executable. Skipping"
+			die "File '$file' exists, but is not executable. Bailing early to prevent out of order execution"
 		fi
 	else
 		log_error "Could not exec file '$file' because it does not exist"
