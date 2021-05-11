@@ -15,7 +15,7 @@ main() {
 
 	GLUE_ACTIONS_DIR="$WD/.glue/actions/auto"
 	GLUE_COMMANDS_DIR="$WD/.glue/commands/auto"
-	GLUE_CONFIG_DIR="$WD/.glue/config/auto"
+	GLUE_CONFIGS_DIR="$WD/.glue/configs/auto"
 
 
 	# ----------------- Global Init (init.sh) ---------------- #
@@ -30,18 +30,18 @@ main() {
 	local commandsBootstrapFile actionsBootstrapFile
 
 	commandsBootstrapFile="$(helper_get_executable_file "$GLUE_STORE/commands.bootstrap")"
-	GLUE_BOOTSTRAP_COMMANDS="$(
+	GLUE_COMMANDS_BOOTSTRAP="$(
 		GLUE_ACTIONS_DIR="$GLUE_ACTIONS_DIR" \
 				GLUE_COMMANDS_DIR="$GLUE_COMMANDS_DIR" \
-				GLUE_CONFIG_DIR="$GLUE_CONFIG_DIR" \
+				GLUE_CONFIGS_DIR="$GLUE_CONFIGS_DIR" \
 				"$commandsBootstrapFile"
 	)" || die "Could not execute '$commandsBootstrapFile' successfully"
 
 	actionsBootstrapFile="$(helper_get_executable_file "$GLUE_STORE/actions.bootstrap")"
-	GLUE_BOOTSTRAP_ACTIONS="$(
+	GLUE_ACTIONS_BOOTSTRAP="$(
 		GLUE_ACTIONS_DIR="$GLUE_ACTIONS_DIR" \
 				GLUE_COMMANDS_DIR="$GLUE_COMMANDS_DIR" \
-				GLUE_CONFIG_DIR="$GLUE_CONFIG_DIR" \
+				GLUE_CONFIGS_DIR="$GLUE_CONFIGS_DIR" \
 				"$actionsBootstrapFile"
 	)" || die "Could not execute '$actionsBootstrapFile' successfully"
 
