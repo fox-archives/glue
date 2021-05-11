@@ -3,6 +3,8 @@
 doSync() {
 	# --------------------- Copy Commands -------------------- #
 	mkdir -p "$WD/.glue/commands/auto/"
+
+	# files
 	find "$WD/.glue/commands/auto/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -print0 | xargs -r0 rm
 
 	local projectTypeStr
@@ -13,6 +15,9 @@ doSync() {
 
 	find "$GLUE_STORE/commands/auto/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -regextype posix-basic -regex "^.*/\($projectTypeStr\)\..*$" -print0 | xargs -r0I '{}' cp '{}' "$WD/.glue/commands/auto/"
 
+	# directories
+	find "$WD/.glue/commands/auto/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type d -print0 | xargs -r0 rm -r
+	find "$GLUE_STORE/commands/auto/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type d -print0 | xargs -r0I '{}' cp -r '{}' "$WD/.glue/commands/auto/"
 
 	# --------------------- Copy Actions --------------------- #
 

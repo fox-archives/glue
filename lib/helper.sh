@@ -150,7 +150,7 @@ helper_run_a_relevant_script() {
 	local when="$4" # can be blank
 
 	shopt -q nullglob
-	shoptExitStatus="$?"
+	local shoptExitStatus="$?"
 	shopt -s nullglob
 
 	# Although the following could be shortened, it's longer
