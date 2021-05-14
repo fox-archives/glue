@@ -48,7 +48,7 @@ main() {
 
 	# ----------------- Local Init (glue.sh) ----------------- #
 	local glueFile="$WD/glue.sh"
-	[[ -f $initFile ]] && source "$glueFile" # exposes: using
+	[[ -f $glueFile ]] && source "$glueFile" # exposes: using
 
 	# shellcheck disable=SC2034
 	declare -ra GLUE_USING=("${using[@]}")
