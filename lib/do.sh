@@ -20,7 +20,28 @@ doSync() {
 	find "$GLUE_STORE/commands/auto/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type d -print0 | xargs -r0I '{}' cp -r '{}' "$WD/.glue/commands/auto/"
 
 	# --------------------- Copy Actions --------------------- #
+	mkdir -p "$WD/.glue/actions/auto"
 
+	local -a actionFiles
+	readarray -d $'\0' actionFiles < <(find "$WD/.glue/commands/" -ignore_readdir_race -type f -exec cat {} \; \
+		| sed -Ene "s/^(\s*)?(\/\/|#)(\s*)?glue(\s*)?requireAction\((.*?)\)$/\5/p" - \
+		| tr '\n' '\0'
+	)
+	for file in "${actionFiles[@]}"; do
+		cp "$GLUE_STORE/actions/auto/$file" "$WD/.glue/actions/auto"
+	done
+
+	# --------------------- Copy Configs --------------------- #
+	mkdir -p "$WD/.glue/configs/auto"
+
+	local -a configFiles
+	readarray -d $'\0' configFiles < <(find "$WD/.glue/actions/" -ignore_readdir_race -type f -exec cat {} \; \
+		| sed -Ene "s/^(\s*)?(\/\/|#)(\s*)?glue(\s*)?requireConfig\((.*?)\)$/\5/p" - \
+		| tr '\n' '\0'
+	)
+	for file in "${configFiles[@]}"; do
+		cp "$GLUE_STORE/configs/auto/$file" "$WD/.glue/configs/auto"
+	done
 }
 
 doCmd() {
