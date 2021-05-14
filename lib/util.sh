@@ -96,3 +96,17 @@ contains_element() {
 	for item; do [[ "$item" == "$match" ]] && return 0; done
 	return 1
 }
+
+show_help() {
+	# TODO better help
+	cat <<-EOF
+	Commands:
+	glue
+
+	    sync
+	        Sync changes to current project
+
+	    cmd <task>
+	        Perform task
+	EOF
+}
