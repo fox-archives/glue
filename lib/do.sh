@@ -1,26 +1,28 @@
 # shellcheck shell=bash
 
 doSync() {
+	# TODO: could be optimized
+
 	# --------------------- Copy Commands -------------------- #
 	mkdir -p "$WD/.glue/commands/auto/"
-
-	# files
 	find "$WD/.glue/commands/auto/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -print0 | xargs -r0 rm
 
+	# files
 	local projectTypeStr
 	for projectType in "${GLUE_USING[@]}"; do
 		projectTypeStr="${projectTypeStr}${projectType}\|"
 	done
 	[[ "${#GLUE_USING[@]}" -gt 0 ]] && projectTypeStr="${projectTypeStr:: -2}"
 
-	find "$GLUE_STORE/commands/auto/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -regextype posix-basic -regex "^.*/\($projectTypeStr\)\..*$" -print0 | xargs -r0I '{}' cp '{}' "$WD/.glue/commands/auto/"
+	find "$GLUE_STORE/commands/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -regextype posix-basic -regex "^.*/\($projectTypeStr\)\..*$" -print0 | xargs -r0I '{}' cp '{}' "$WD/.glue/commands/auto/"
 
 	# directories
 	find "$WD/.glue/commands/auto/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type d -print0 | xargs -r0 rm -r
-	find "$GLUE_STORE/commands/auto/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type d -print0 | xargs -r0I '{}' cp -r '{}' "$WD/.glue/commands/auto/"
+	find "$GLUE_STORE/commands/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type d -print0 | xargs -r0I '{}' cp -r '{}' "$WD/.glue/commands/auto/"
 
 	# --------------------- Copy Actions --------------------- #
 	mkdir -p "$WD/.glue/actions/auto"
+	find "$WD/.glue/actions/auto/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -print0 | xargs -r0 rm
 
 	local -a actionFiles
 	readarray -d $'\0' actionFiles < <(find "$WD/.glue/commands/" -ignore_readdir_race -type f -exec cat {} \; \
@@ -28,11 +30,12 @@ doSync() {
 		| tr '\n' '\0'
 	)
 	for file in "${actionFiles[@]}"; do
-		cp "$GLUE_STORE/actions/auto/$file" "$WD/.glue/actions/auto"
+		cp "$GLUE_STORE/actions/$file" "$WD/.glue/actions/auto"
 	done
 
 	# --------------------- Copy Configs --------------------- #
 	mkdir -p "$WD/.glue/configs/auto"
+	find "$WD/.glue/configs/auto/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -print0 | xargs -r0 rm
 
 	local -a configFiles
 	readarray -d $'\0' configFiles < <(find "$WD/.glue/actions/" -ignore_readdir_race -type f -exec cat {} \; \
@@ -40,7 +43,7 @@ doSync() {
 		| tr '\n' '\0'
 	)
 	for file in "${configFiles[@]}"; do
-		cp "$GLUE_STORE/configs/auto/$file" "$WD/.glue/configs/auto"
+		cp "$GLUE_STORE/configs/$file" "$WD/.glue/configs/auto"
 	done
 }
 
