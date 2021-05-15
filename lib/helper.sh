@@ -91,7 +91,6 @@ helper_get_executable_file() {
 		log_warn "File '$firstFileMatch' will be executed, but it is not marked as executable"
 	fi
 
-
 	printf "%s" "$firstFileMatch"
 }
 

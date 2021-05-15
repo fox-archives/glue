@@ -2,7 +2,7 @@
 
 doSync() {
 	# ------------------------- Nuke ------------------------- #
-	mkdir -p "$WD"/.glue/{actions,commands,common,configs,output}/auto/
+	mkdir -p "$WD"/.glue/{actions,commands,common,configs,output,state}/auto/
 	find "$WD"/.glue/{actions,commands,common,configs,output}/auto/ \
 			-ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -print0 \
 		| xargs -r0 -- rm
