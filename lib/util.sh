@@ -4,7 +4,6 @@
 
 trap sigint INT
 sigint() {
-	set +x
 	die 'Received SIGINT'
 }
 
@@ -59,7 +58,7 @@ exec_file() {
 		if [ -x "$file" ]; then
 			# shellcheck disable=SC2097
 			GLUE_WD="$WD" \
-			GLUE_IS_AUTO="$isAuto" \
+				GLUE_IS_AUTO="$isAuto" \
 				GLUE_COMMANDS_BOOTSTRAP="$GLUE_COMMANDS_BOOTSTRAP" \
 				GLUE_ACTIONS_BOOTSTRAP="$GLUE_ACTIONS_BOOTSTRAP" \
 				"$file"
@@ -72,6 +71,7 @@ exec_file() {
 	fi
 }
 
+# TODO: remove some subshell
 ensure_fn_args() {
 	fnName="$1"
 	args="$2"

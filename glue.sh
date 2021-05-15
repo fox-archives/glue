@@ -2,6 +2,7 @@
 set -Eo pipefail
 
 # source code directory
+# TODO: avoid subshell
 SRCDIR="$(dirname "$(cd "$(dirname "$0")"; pwd -P)/$(basename "$0")")" || die 'Irrecoverable failure'
 source "$SRCDIR/lib/do.sh"
 source "$SRCDIR/lib/helper.sh"
