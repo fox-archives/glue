@@ -50,6 +50,4 @@ Configuration is separated in three subfolders of `.glue`: `actions`, `commands`
 
 TODO
 
-- vital: copy actions on 'sync' per # glue useActions() comments
-- vital: copy configs on 'sync' per # glue useConfigs() comments
 - documentation

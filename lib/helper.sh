@@ -68,6 +68,10 @@ helper_get_executable_file() {
 	ensure_fn_args 'helper_get_executable_file' '1' "$@" || return
 	local file="$1"
 
+	shopt -q nullglob
+	local shoptExitStatus="$?"
+	shopt -s nullglob
+
 	hasRanFile=no
 	firstFileMatch=
 	for aFileMatch in "$file".*?; do
@@ -80,9 +84,13 @@ helper_get_executable_file() {
 		firstFileMatch="$aFileMatch"
 	done
 
-	if [[ ! -x $firstFileMatch ]]; then
+	(( shoptExitStatus != 0 )) && shopt -u nullglob
+
+
+	if [[ -n $firstFileMatch && ! -x $firstFileMatch ]]; then
 		log_warn "File '$firstFileMatch' will be executed, but it is not marked as executable"
 	fi
+
 
 	printf "%s" "$firstFileMatch"
 }
@@ -97,19 +105,23 @@ helper_run_task_scripts() {
 
 	local hasRan=no
 
-	# the blank 'lang' represents a file like 'build-before.sh' or 'build.sh'
 	local -a projectTypes=()
 	for projectType; do
 		projectTypes+=("$projectType.")
 	done
 
+	# a blank 'projectType' represents a file like 'build.sh' compared to 'NodeJS_Server.build.sh'
 	for projectType in "${projectTypes[@]}" ''; do
-		# a blank 'when' represents a file like 'build-go.sh' or 'build.sh'
+		# a blank 'when' represents a file like 'build-go.sh' compared to 'build-go-before.sh'
+		local overrideFile autoFile
 		for when in -before '' -after; do
-			# this either runs the 'auto' script or the user-override, depending
-			# on whether which ones are present
-			helper_run_a_relevant_script "$task" "$commandDir" "$projectType" "$when"
-			if [[ $? -eq 0 ]]; then
+			overrideFile="$(helper_get_executable_file "$commandDir/${projectType}${task}${when}")"
+			autoFile="$(helper_get_executable_file "$commandDir/auto/${projectType}${task}${when}")"
+			if [ -f "$overrideFile" ]; then
+				exec_file "$overrideFile" "no"
+				hasRan=yes
+			elif [ -f "$autoFile" ]; then
+				exec_file "$autoFile" "yes"
 				hasRan=yes
 			fi
 		done
@@ -122,74 +134,28 @@ helper_run_task_scripts() {
 
 # Run the tasks for a particular language
 helper_run_task_and_projectType_scripts() {
-	ensure_fn_args 'helper_run_task_and_projectType_scripts' '1 2 3' "$@" || return
+	ensure_fn_args 'helper_run_task_and_projectType_scripts' '1 2 3' || return
 	local task="$1"
 	local commandDir="$2"
 	local projectType="$3"
+
 	local hasRan=no
 
+	# a blank 'when' represents a file like 'build-go.sh' compared to 'build-go-before.sh'
+	local overrideFile autoFile
 	for when in -before '' -after; do
-		# this either runs the 'auto' script or the user-override, depending
-		# on whether which ones are present
-		helper_run_a_relevant_script "$task" "$commandDir" "$projectType." "$when"
-		if [[ $? -eq 0 ]]; then
+		overrideFile="$(helper_get_executable_file "$commandDir/${projectType}${task}${when}")"
+		autoFile="$(helper_get_executable_file "$commandDir/auto/${projectType}${task}${when}")"
+		if [ -f "$overrideFile" ]; then
+			exec_file "$overrideFile" "no"
+			hasRan=yes
+		elif [ -f "$autoFile" ]; then
+			exec_file "$autoFile" "yes"
 			hasRan=yes
 		fi
 	done
 
 	if [[ $hasRan == no ]]; then
 		die "Task '$task' did not match any files in directory '$commandDir'"
-	fi
-}
-
-helper_run_a_relevant_script() {
-	ensure_fn_args 'helper_run_a_relevant_script' '1 2' "$@" || return
-	local task="$1"
-	local commandDir="$2"
-	local projectType="$3" # can be blank
-	local when="$4" # can be blank
-
-	shopt -q nullglob
-	local shoptExitStatus="$?"
-	shopt -s nullglob
-
-	# Although the following could be shortened, it's longer
-	# because we checkif there are duplicate files and warn the user
-
-	# run the file, if it exists (override)
-	local hasRanFile=no
-	for file in "$commandDir/${projectType}${task}${when}".*?; do
-		if [[ $hasRanFile = yes ]]; then
-			log_warn "Duplicate file '$file' should not exist"
-			break
-		fi
-
-		hasRanFile=yes
-		exec_file "$file" "no"
-	done
-
-	# we ran the user file, which overrides the auto file
-	# continue to next 'when' by returning
-	if [[ $hasRanFile == yes ]]; then
-		(( shoptExitStatus != 0 )) && shopt -u nullglob
-		return
-	fi
-
-	# if no files were ran, run the auto file, if it exists
-	# TODO: helper_get_executable_file
-	for file in "$commandDir/auto/${projectType}${task}${when}".*?; do
-		if [[ $hasRanFile = yes ]]; then
-			log_warn "Duplicate file '$file' should not exist"
-			break
-		fi
-
-		hasRanFile=yes
-		exec_file "$file" "yes"
-	done
-
-	(( shoptExitStatus != 0 )) && shopt -u nullglob
-
-	if [[ $hasRanFile == no ]]; then
-		return 1
 	fi
 }

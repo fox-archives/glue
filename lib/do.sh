@@ -47,8 +47,21 @@ doSync() {
 doCmd() {
 	[[ -z $1 ]] && die 'No task passed'
 
-	# *this* task is the specific task like 'build', 'ci', etc., even tough
-	# we still call $1 a 'task'
+	# -------------- Store Init (*.boostrap.sh) -------------- #
+	local commandsBootstrapFile actionsBootstrapFile
+
+	commandsBootstrapFile="$(helper_get_executable_file "$GLUE_STORE/commands.bootstrap")"
+	GLUE_COMMANDS_BOOTSTRAP="$(
+		cat "$commandsBootstrapFile"
+	)" || die "Could not get contents of '$commandsBootstrapFile' successfully"
+
+	actionsBootstrapFile="$(helper_get_executable_file "$GLUE_STORE/actions.bootstrap")"
+	GLUE_ACTIONS_BOOTSTRAP="$(
+		cat "$actionsBootstrapFile"
+	)" || die "Could not get contents of '$actionsBootstrapFile' successfully"
+
+	# *this* task is the specific task like 'build', 'ci', etc., even though
+	# we still call "$1" a 'task'
 	local projectType task
 	task="$(helper_get_task "$1")" || return
 	projectType="$(helper_get_projectType "$1")" || return

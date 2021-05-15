@@ -58,13 +58,11 @@ exec_file() {
 	if [ -f "$file" ]; then
 		if [ -x "$file" ]; then
 			# shellcheck disable=SC2097
-			GLUE_ACTIONS_DIR="$GLUE_ACTIONS_DIR" \
-					GLUE_COMMANDS_DIR="$GLUE_COMMANDS_DIR" \
-					GLUE_CONFIGS_DIR="$GLUE_CONFIGS_DIR" \
-					GLUE_COMMANDS_BOOTSTRAP="$GLUE_COMMANDS_BOOTSTRAP" \
-					GLUE_ACTIONS_BOOTSTRAP="$GLUE_ACTIONS_BOOTSTRAP" \
-					GLUE_IS_AUTO="$isAuto" \
-					"$file"
+			GLUE_WD="$WD" \
+			GLUE_IS_AUTO="$isAuto" \
+				GLUE_COMMANDS_BOOTSTRAP="$GLUE_COMMANDS_BOOTSTRAP" \
+				GLUE_ACTIONS_BOOTSTRAP="$GLUE_ACTIONS_BOOTSTRAP" \
+				"$file"
 			return
 		else
 			die "File '$file' exists, but is not executable. Bailing early to prevent out of order execution"
