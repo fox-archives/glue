@@ -1,4 +1,4 @@
-# glue
+# Glue
 
 Glue is the manifestation of a generalized task runner with respect to language agnosticity
 
@@ -27,14 +27,22 @@ If you have a Go project, are you tired of the following monotonous tasks?
 - Configuring CI
 - etc.
 
-Indeed, `cookiecutter`, `yeoman`, and project template generators help, but if you want to add functionality to the boilerplate files, you have to add it to every single project manually (as well, of course, to the boilerplate repository/directory) since localized configuration drift is inveitable.
+Indeed, `cookiecutter`, `yeoman`, and in general, project template generators help, but if you want to add functionality to an exisitng project that has already had its boilerplate initialized, you would have to add it manually in every case. This makes consistent behavior across similar project types somewhat tricky since localized configuration drift is inveitable. If you're anything like me, you probably ended up not procuding the best configuration for any given project since it's quite laborious to do and it isn't automated
 
-If you use `glue` and wish to add functionality that is generalized enough for most projects of a particular language, simply edit the boilerplate, and run a command in each project for new changes to reflect. They are reflected in the `.glue` folder, which resides at project root. Some features of `glue` include
+Some benefits of Glue include
 
-- Easy escape hatches are provided if you wish to overide or modify any generalizations
+- It can be used for any language, technology, or framework
+- Automation scripts can be writen in any language (Bash, Python)
+- Scripts are automatically copied to each project and stored in version control (Reproducible Builds / Transparency / Traceability)
+- Escape hatches to override or modify the behavior of any particular script
 - Written in pure Bash
-- Configuration decoupled from traditional locations of configuration (everything is isolated in `.glue`)
-- Automate your cargo culting (or the configuration of best practices (however you interpret))
+- Writen for speed (Uses subshells quite sporadically)
+- Configuration decoupled from traditional configuration locations
+
+Some detraments of Glue include
+
+- User scripts can have a boilerplate nature due to the inherit caveats of the `.glue` folder structure and the fact that Glue is a task runner framework, rather than a script library
+- It's general nature means you must write bootstrap strings to be eval'd later given the language of implementation of your script files (see `actions.bootstrap.sh`, etc.)
 
 ### Details
 
@@ -43,3 +51,7 @@ CURRENT STATE: BETA
 For concrete examples see [glue-example](https://github.com/eankeen/glue-example) and it's respective [glue-store](https://github.com/eankeen/glue-store)
 
 See [details.md](./docs/details.md)
+
+- Fix broken links in docs
+- Other todos scattered throughout
+- On warnings in which there is something about with two files, print the two files adjacently vertical

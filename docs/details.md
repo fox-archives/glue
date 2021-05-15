@@ -65,7 +65,7 @@ glue cmd Python.build
 
 Scripts have to be named a particular way for Glue to discover them. It meant to be nearly identical to the argument specified when using the subcommand `cmd`. The following shows the format
 
-# TODO: check to be sure all of these are valid
+TODO: check to be sure all of these are valid
 
 ```txt
 [projectType]<.task>[-when].<fileExtension>

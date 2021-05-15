@@ -12,11 +12,11 @@ An absolute path to the current project. In other words, the directory that cont
 
 Whether or not the currently running script has a parent folder of 'auto'. Has a value of either `yes` or `no`.
 
-### GLUE_COMMANDS_BOOTSTRAP
+### `GLUE_COMMANDS_BOOTSTRAP`
 
 The stage 1 bootstrap commands to executed when a script under the 'commands' directory executes or is sourced
 
-### GLUE_ACTIONS_BOOTSTRAP
+### `GLUE_ACTIONS_BOOTSTRAP`
 
 The stage 1 bootstrap commands to be executed when a script under the 'actions' directory executes or is sourced
 
@@ -50,14 +50,6 @@ Any persistent state that your scripts may emit. Use of this directory is _highl
 
 # Miscellaneous
 
-Most script-writing-gotchia's are due to the fact that the script file can reside in either `commands/auto/script.sh` or `commands/script.sh`
+- Most script-writing-gotchia's are due to the fact that the script file can reside in either `commands/auto/script.sh` or `commands/script.sh`
 
-- Note that for example, when `commands/auto/script.sh` runs, GLUE_ACTIONS_DIR may be different on first pass. This is due to the eval of `GLUE_ACTIONS_BOOTSTRAP`. So, only use these variables in functions
-
-# Store
-
-- Any executable, recommended a shellscript with a shebang, but other interpreters with shebangs or something marked with bimfmt_misc will work as well
-
-## Commands
-
-## Actions
+- Note that for example, when `commands/auto/script.sh` runs, `GLUE_ACTIONS_DIR` may be different on first pass. This is due to the eval of `GLUE_ACTIONS_BOOTSTRAP`. So, only use these variables in functions
