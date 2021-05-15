@@ -1,49 +1,71 @@
 # shellcheck shell=bash
 
 doSync() {
-	# TODO: could be optimized
+	# ------------------------- Nuke ------------------------- #
+	mkdir -p "$WD"/.glue/{actions,commands,common,configs,output}/auto/
+	find "$WD"/.glue/{actions,commands,common,configs,output}/auto/ \
+			-ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -print0 \
+		| xargs -r0 -- rm
 
-	# --------------------- Copy Commands -------------------- #
-	mkdir -p "$WD/.glue/commands/auto/"
-	find "$WD/.glue/commands/auto/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -print0 | xargs -r0 rm
+	find "$WD"/.glue/{actions,commands,common,configs,output}/auto/ \
+			-ignore_readdir_race -mindepth 1 -maxdepth 1 -type d -print0 \
+		| xargs -r0 -- rm -rf
 
-	# files
+
+	# ---------------------- Directories --------------------- #
+	# ACTIONS, COMMANDS, COMMON
+	local dir
+	for dir in actions commands common; do
+		find "$GLUE_STORE/$dir/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type d -print0 \
+				| xargs -r0I '{}' -- cp -r '{}' "$WD/.glue/$dir/auto/"
+	done
+
+
+	# ------------------------- Files ------------------------ #
+	# COMMANDS:
 	local projectTypeStr
 	for projectType in "${GLUE_USING[@]}"; do
 		projectTypeStr="${projectTypeStr}${projectType}\|"
 	done
 	[[ "${#GLUE_USING[@]}" -gt 0 ]] && projectTypeStr="${projectTypeStr:: -2}"
 
-	find "$GLUE_STORE/commands/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -regextype posix-basic -regex "^.*/\($projectTypeStr\)\..*$" -print0 | xargs -r0I '{}' cp '{}' "$WD/.glue/commands/auto/"
+	find "$GLUE_STORE/commands/" \
+			-ignore_readdir_race -mindepth 1 -maxdepth 1 -type f \
+			-regextype posix-basic -regex "^.*/\($projectTypeStr\)\..*$" -print0 \
+		| xargs -r0I '{}' -- cp '{}' "$WD/.glue/commands/auto/"
 
-	# directories
-	find "$WD/.glue/commands/auto/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type d -print0 | xargs -r0 rm -r
-	find "$GLUE_STORE/commands/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type d -print0 | xargs -r0I '{}' cp -r '{}' "$WD/.glue/commands/auto/"
+	# ACTIONS, CONFIGS
+	# <directoryToSearchAnnotations:annotationName:directoryToSearchForFile>
+	local arg
+	for arg in 'commands:requireAction:actions' 'actions:requireConfig:configs'; do
+		local searchDir="${arg%%:*}"
+		local annotationName="${arg#*:}"; annotationName="${annotationName%:*}"
+		local fileDir="${arg##*:}"
 
-	# --------------------- Copy Actions --------------------- #
-	mkdir -p "$WD/.glue/actions/auto"
-	find "$WD/.glue/actions/auto/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -print0 | xargs -r0 rm
+		local -a files=()
+		readarray -d $'\0' files < <(find "$WD"/.glue/$searchDir/{,auto/} -ignore_readdir_race -type f \
+				-exec cat {} \; \
+			| sed -Ene "s/^(\s*)?(\/\/|#)(\s*)?glue(\s*)?${annotationName}\((.*?)\)$/\5/p" - \
+			| sort -u \
+			| tr '\n' '\0'
+		)
 
-	local -a actionFiles
-	readarray -d $'\0' actionFiles < <(find "$WD/.glue/commands/" -ignore_readdir_race -type f -exec cat {} \; \
-		| sed -Ene "s/^(\s*)?(\/\/|#)(\s*)?glue(\s*)?requireAction\((.*?)\)$/\5/p" - \
-		| tr '\n' '\0'
-	)
-	for file in "${actionFiles[@]}"; do
-		cp "$GLUE_STORE/actions/$file" "$WD/.glue/actions/auto"
-	done
-
-	# --------------------- Copy Configs --------------------- #
-	mkdir -p "$WD/.glue/configs/auto"
-	find "$WD/.glue/configs/auto/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -print0 | xargs -r0 rm
-
-	local -a configFiles
-	readarray -d $'\0' configFiles < <(find "$WD/.glue/actions/" -ignore_readdir_race -type f -exec cat {} \; \
-		| sed -Ene "s/^(\s*)?(\/\/|#)(\s*)?glue(\s*)?requireConfig\((.*?)\)$/\5/p" - \
-		| tr '\n' '\0'
-	)
-	for file in "${configFiles[@]}"; do
-		cp "$GLUE_STORE/configs/$file" "$WD/.glue/configs/auto"
+		# 'file' is a relative path
+		for file in "${files[@]}"; do
+			if [ -f "$GLUE_STORE/$fileDir/$file" ]; then
+				case "$file" in
+				*/*)
+					# If file contains a directory path in it
+					mkdir -p "$WD/.glue/$fileDir/auto/${file%/*}"
+					cp "$GLUE_STORE/$fileDir/$file" "$WD/.glue/$fileDir/auto/${file%/*}"
+					;;
+				*)
+					cp "$GLUE_STORE/$fileDir/$file" "$WD/.glue/$fileDir/auto/"
+				esac
+			else
+				log_warn "Corresponding file for annotation'$annotationName()' not found in directory '$GLUE_STORE/$fileDir'. Skipping'"
+			fi
+		done
 	done
 }
 
