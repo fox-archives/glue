@@ -2,14 +2,17 @@
 set -Eo pipefail
 
 # source code directory
-# TODO: avoid subshell
-SRCDIR="$(dirname "$(cd "$(dirname "$0")"; pwd -P)/$(basename "$0")")" || die 'Irrecoverable failure'
-source "$SRCDIR/lib/do.sh"
-source "$SRCDIR/lib/helper.sh"
-source "$SRCDIR/lib/util.sh"
+GLUE_ROOT_DIR="$(readlink -f "${BASH_SOURCE[0]}")" || die 'Irrecoverable failure'
+GLUE_ROOT_DIR="${GLUE_ROOT_DIR%/*}"
+source "$GLUE_ROOT_DIR/lib/util/util.sh" || { echo "Erorr: Could not source file"; exit 1; }
+source "$GLUE_ROOT_DIR/lib/util/get.sh" || util.source_error
+source "$GLUE_ROOT_DIR/lib/util/init.sh" || util.source_error
+source "$GLUE_ROOT_DIR/lib/util/log.sh" || util.source_error
+source "$GLUE_ROOT_DIR/lib/do.sh" || util.source_error
+source "$GLUE_ROOT_DIR/lib/helper.sh" || util.source_error
 
-# working directory
-WD="$(helper_get_wd)" || exit
+set.wd
+GLUE_WD="$PWD"
 
 main() {
 	# ----------------- Global Init (init.sh) ---------------- #
@@ -20,13 +23,20 @@ main() {
 	unset -v initFile store
 
 	# ----------------- Local Init (glue.sh) ----------------- #
-	local glueFile="$WD/glue.sh"
+	local glueFile="$GLUE_WD/glue.sh"
 	[[ -f $glueFile ]] && source "$glueFile" # exposes: using
 
 	readonly -a GLUE_USING=("${using[@]}")
 	unset -v glueFile using
 
 	# ------------------------- Main ------------------------- #
+	for arg; do
+		case "$arg" in
+			(-h|--help) util_show_help; exit ;;
+			(-v|--version) util_show_version; exit
+		esac
+	done
+
 	case "$1" in
 		sync)
 			shift
@@ -37,8 +47,8 @@ main() {
 			doCmd "$@"
 			;;
 		*)
-			die "Subcommand does not exist"
-			show_help
+			log.error "Subcommand does not exist"
+			util.show_help
 			exit 1
 	esac
 }

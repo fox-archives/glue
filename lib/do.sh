@@ -2,12 +2,12 @@
 
 doSync() {
 	# ------------------------- Nuke ------------------------- #
-	mkdir -p "$WD"/.glue/{actions,commands,common,configs,output,state}/auto/
-	find "$WD"/.glue/{actions,commands,common,configs,output}/auto/ \
+	mkdir -p "$GLUE_WD"/.glue/{actions,commands,common,configs,output,state}/auto/
+	find "$GLUE_WD"/.glue/{actions,commands,common,configs,output}/auto/ \
 			-ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -print0 \
 		| xargs -r0 -- rm
 
-	find "$WD"/.glue/{actions,commands,common,configs,output}/auto/ \
+	find "$GLUE_WD"/.glue/{actions,commands,common,configs,output}/auto/ \
 			-ignore_readdir_race -mindepth 1 -maxdepth 1 -type d -print0 \
 		| xargs -r0 -- rm -rf
 
@@ -17,7 +17,7 @@ doSync() {
 	local dir
 	for dir in actions commands common; do
 		find "$GLUE_STORE/$dir/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type d -print0 \
-				| xargs -r0I '{}' -- cp -r '{}' "$WD/.glue/$dir/auto/"
+				| xargs -r0I '{}' -- cp -r '{}' "$GLUE_WD/.glue/$dir/auto/"
 	done
 
 
@@ -32,7 +32,7 @@ doSync() {
 	find "$GLUE_STORE/commands/" \
 			-ignore_readdir_race -mindepth 1 -maxdepth 1 -type f \
 			-regextype posix-basic -regex "^.*/\($projectTypeStr\)\..*$" -print0 \
-		| xargs -r0I '{}' -- cp '{}' "$WD/.glue/commands/auto/"
+		| xargs -r0I '{}' -- cp '{}' "$GLUE_WD/.glue/commands/auto/"
 
 	# ACTIONS, CONFIGS
 	# <directoryToSearchAnnotations:annotationName:directoryToSearchForFile>
@@ -43,7 +43,7 @@ doSync() {
 		local fileDir="${arg##*:}"
 
 		local -a files=()
-		readarray -d $'\0' files < <(find "$WD"/.glue/$searchDir/{,auto/} -ignore_readdir_race -type f \
+		readarray -d $'\0' files < <(find "$GLUE_WD"/.glue/$searchDir/{,auto/} -ignore_readdir_race -type f \
 				-exec cat {} \; \
 			| sed -Ene "s/^(\s*)?(\/\/|#)(\s*)?glue(\s*)?${annotationName}\((.*?)\)$/\5/p" - \
 			| sort -u \
@@ -56,53 +56,56 @@ doSync() {
 				case "$file" in
 				*/*)
 					# If file contains a directory path in it
-					mkdir -p "$WD/.glue/$fileDir/auto/${file%/*}"
-					cp "$GLUE_STORE/$fileDir/$file" "$WD/.glue/$fileDir/auto/${file%/*}"
+					mkdir -p "$GLUE_WD/.glue/$fileDir/auto/${file%/*}"
+					cp "$GLUE_STORE/$fileDir/$file" "$GLUE_WD/.glue/$fileDir/auto/${file%/*}"
 					;;
 				*)
-					cp "$GLUE_STORE/$fileDir/$file" "$WD/.glue/$fileDir/auto/"
+					cp "$GLUE_STORE/$fileDir/$file" "$GLUE_WD/.glue/$fileDir/auto/"
 				esac
 			else
-				log_warn "Corresponding file for annotation'$annotationName()' not found in directory '$GLUE_STORE/$fileDir'. Skipping'"
+				log.warn "Corresponding file for annotation'$annotationName()' not found in directory '$GLUE_STORE/$fileDir'. Skipping'"
 			fi
 		done
 	done
 }
 
 doCmd() {
-	[[ -z $1 ]] && die 'No task passed'
+	[[ -z $1 ]] && die 'No meta task passed'
 
 	# -------------- Store Init (*.boostrap.sh) -------------- #
 	local commandsBootstrapFile actionsBootstrapFile
 
-	commandsBootstrapFile="$(helper_get_executable_file "$GLUE_STORE/commands.bootstrap")"
+	helper.get_executable_file "$GLUE_STORE/commands.bootstrap"
+	commandsBootstrapFile="$REPLY"
 	GLUE_COMMANDS_BOOTSTRAP="$(
 		cat "$commandsBootstrapFile"
 	)" || die "Could not get contents of '$commandsBootstrapFile' successfully"
 
-	actionsBootstrapFile="$(helper_get_executable_file "$GLUE_STORE/actions.bootstrap")"
+	helper.get_executable_file "$GLUE_STORE/actions.bootstrap"
+	actionsBootstrapFile="$REPLY"
 	GLUE_ACTIONS_BOOTSTRAP="$(
 		cat "$actionsBootstrapFile"
 	)" || die "Could not get contents of '$actionsBootstrapFile' successfully"
 
 	# *this* task is the specific task like 'build', 'ci', etc., even though
 	# we still call "$1" a 'task'
-	local projectType task
-	task="$(helper_get_task "$1")" || return
-	projectType="$(helper_get_projectType "$1")" || return
+	get.task "$1"
+	local task="$REPLY"
 
-	local commandDir="$WD/.glue/commands"
+	get.projectType "$1"
+	local projectType="$REPLY"
+
+	local commandDir="$GLUE_WD/.glue/commands"
 	if [[ -z $projectType ]]; then
-		# no specific language on cli. run all specified languages
-		# as per config
+		# no specific language on cli. run all specified languages as per glue.sh
 		[[ ! -v GLUE_USING ]] && {
 			die "Please set 'using' in the Glue project configuration (glue.sh)"
 			return
 		}
 
-		helper_run_task_scripts "$task" "$commandDir" "${GLUE_USING[@]}"
+		helper.run_task_scripts "$task" "$commandDir" "${GLUE_USING[@]}"
 	else
 		# run only the command specific to a language
-		helper_run_task_and_projectType_scripts "$task" "$commandDir" "$projectType"
+		helper.run_task_and_projectType_scripts "$task" "$commandDir" "$projectType"
 	fi
 }

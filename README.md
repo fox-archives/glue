@@ -55,3 +55,11 @@ See [details.md](./docs/details.md)
 - Fix broken links in docs
 - Other todos scattered throughout
 - On warnings in which there is something about with two files, print the two files adjacently vertical
+- greadlink readlink -f check
+- TODO: autocomplete
+- make requireConfig work with folders
+- rename requireConfig to useConfig
+- search for requireActions in 'actions'?
+- cd to GLUE_WD?
+- list dependencies in regular file instead of having requireCOnfig annotatinos
+- log paths show relative paths

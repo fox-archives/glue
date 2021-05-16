@@ -24,21 +24,54 @@ It's important to understand the execution flow of Glue when using the `cmd` sub
 
 ## Finding Scripts
 
-Glue's process of finding and executing scripts in accordance to a user's specified task makes script-writing easy to extend and modify. This functionality is only for scripts in `commands`, _not_ `actions` (you would have to implement it yourself).
+Glue's process of finding and executing a script file in accordance to a user's specified meta task makes script-writing easy to extend and modify. This functionality is only for scripts in `commands`, _not_ `actions` (you would have to implement it yourself).
 
-We will show behavior starting from the most specific task to the least specific:
+A meta task is a combination of a Project Type, a Task, and a When
 
-### "Project Type and Task"
+For each of the following headings, a file structure and commands to execute those particular files are shown.
+
+Note that Glue looks for a particular script (ex. NodeJS_Server.build.sh`) in `.glue/commands/auto`. However, if one by the same name is found in `.glue/commands`, it uses that instead
+
+### When
+
+```txt
+commands/NodeJS_Server.build-before.sh
+commands/NodeJS_Server.build.sh
+commands/NodeJS_Server.build-after.sh
+```
+
+_Optionally_ add a 'when' to your meta task, which is a hyphen followed by either `before`, or `after`. In this example, it builds a NodeJS Server (ex. compiles TypeScript)
+
+To execute all three in order:
 
 ```sh
 glue cmd NodeJS_Server.build
 ```
 
-For each of the following files specified, it will look for it first at `./glue/commands/$fileName`. If it's not found, then it will use `./glue/commands/$fileName`. If neither are found, Glue exits with an error
+To execute 'NodeJS_Server.build-before.sh`
 
-With the above input, Glue executes the following files in order `NodeJS_Server.build-before.sh`, `NodeJS_Server.build.sh`, and `NodeJS_Server.build-after.sh`
+```sh
+glue cmd NodeJS_Server.build-before.sh
+```
 
-### "Project Type and No Task"
+To execute _only_ `NodeJS_Server.build.sh`
+
+```sh
+glue cmd NodeJS_Server.build-only.sh
+```
+
+When is _super_ useful if you want to extend the funtionality of a script without changing it
+
+For example, consider the following folder structure
+
+```sh
+commands/auto/NodeJS_Server.build.sh
+commands/NodeJS_Server.build-after.sh
+```
+
+In this case, Glue will execute `NodeJS_Server.build.sh`, then `NodeJS_Server.build-after.sh`. By doing this, you extend the functionality of your build scripts. Note that omitting the 'When' portion would cause only the script in `commands/NodeJS_Server.build.sh` to execute
+
+### Project Type
 
 ```sh
 glue cmd NodeJS_Server
@@ -46,13 +79,13 @@ glue cmd NodeJS_Server
 
 TODO: This shouldn't do anything and return an error. It doesn't make sense to execute all tasks associated with a projectType in order.
 
-### "No Project Type and No Task"
+### No Project Type and No Task
 
 ```sh
 glue cmd build
 ```
 
-This performs the ["Project Type and Task](### "Project Type and Task") steps for every projectType specified in your `glue.sh`.
+This performs the [Project Type and Task](###project-type-and-task) steps for every projectType specified in your `glue.sh`.
 
 For example, if in your `glue.sh`, you have `using=("NodeJS_Server Python")`, it will functionality be the same as typing
 
@@ -83,4 +116,4 @@ NodeJS_Server.ci.sh
 ci.sh
 ```
 
-To know which scripts are executed in which order, see [Finding Scripts](## Finding Scripts)
+To know which scripts are executed in which order, see [Finding Scripts](##finding-scripts)

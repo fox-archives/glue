@@ -4,7 +4,7 @@
 source ../lib/helper.sh
 source ../lib/util.sh
 
-@test "helper_get_task" {
+@test "get.task" {
 	local input result expected
 	local -A tests=(
 		# task and projectName
@@ -23,7 +23,7 @@ source ../lib/util.sh
 	for i in "${!tests[@]}"; do
 		input="$i"
 		expected="${tests[$i]}"
-		result="$(helper_get_task "$input")"
+		result="$(get.task "$input")"
 
 		# {
 		# 	echo ---
@@ -36,7 +36,7 @@ source ../lib/util.sh
 	done
 }
 
-@test "helper_get_projectType" {
+@test "get.projectType" {
 	local input result expected
 	local -A tests=(
 		# task and projectName
@@ -55,7 +55,7 @@ source ../lib/util.sh
 	for i in "${!tests[@]}"; do
 		input="$i"
 		expected="${tests[$i]}"
-		result="$(helper_get_projectType "$input")"
+		result="$(get.projectType "$input")"
 
 		# {
 		# 	echo ---
@@ -68,7 +68,7 @@ source ../lib/util.sh
 	done
 }
 
-@test "helper_get_when" {
+@test "get.when" {
 	local input result expected
 	local -A tests=(
 		# task and projectName
@@ -87,7 +87,7 @@ source ../lib/util.sh
 	for i in "${!tests[@]}"; do
 		input="$i"
 		expected="${tests[$i]}"
-		result="$(helper_get_when "$input")"
+		result="$(get.when "$input")"
 
 		# {
 		# 	echo ---
