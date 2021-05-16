@@ -19,7 +19,9 @@ helper.get_executable_file() {
 	firstFileMatch=
 	for aFileMatch in "$file".*?; do
 		if [[ $hasRanFile = yes ]]; then
-			log.warn "Both '$aFileMatch' and '$firstFileMatch' should not exist"
+			log.warn "Two files match the same pattern"
+			echo "    -> '$aFileMatch" >&2
+			echo "    -> '$firstFileMatch'" >&2
 			break
 		fi
 

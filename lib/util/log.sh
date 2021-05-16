@@ -10,14 +10,29 @@ die() {
 	exit 1
 }
 
+# Print info
 log.info() {
-	printf "\033[0;34m%s\033[0m\n" "Info: $*"
+	if [[ -v NO_COLOR || $TERM = dumb ]]; then
+		printf "%s\n" "Info: $*"
+	else
+		printf "\033[0;34m%s\033[0m\n" "Info: $*"
+	fi
 }
 
+# Print warning
 log.warn() {
-	printf "\033[1;33m%s\033[0m\n" "Warn: $*" >&2
+	if [[ -v NO_COLOR || $TERM = dumb ]]; then
+		printf "%s\n" "Warn: $*"
+	else
+		printf "\033[1;33m%s\033[0m\n" "Warn: $*" >&2
+	fi
 }
 
+# Print error
 log.error() {
-	printf "\033[0;31m%s\033[0m\n" "Error: $*" >&2
+	if [[ -v NO_COLOR || $TERM = dumb ]]; then
+		printf "%s\n" "Error: $*"
+	else
+		printf "\033[0;31m%s\033[0m\n" "Error: $*" >&2
+	fi
 }

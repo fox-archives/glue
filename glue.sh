@@ -42,6 +42,10 @@ main() {
 			shift
 			doSync "$@"
 			;;
+		list)
+			sync
+			doList "$@"
+			;;
 		cmd)
 			shift
 			doCmd "$@"

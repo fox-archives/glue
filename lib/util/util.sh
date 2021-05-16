@@ -39,8 +39,7 @@ util.show_help() {
 }
 
 util.show_version() {
-	# TODO
 	cat <<-EOF
-	VERSION
+	0.3
 	EOF
 }

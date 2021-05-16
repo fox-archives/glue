@@ -26,11 +26,11 @@ Certain directories have an intrinsic meaning and should be used as such. All di
 
 ### `commands`
 
-The location Glue looks to execute a particular task. Glue also scans this directory to find `requireAction()` annotations
+The location Glue looks to execute a particular task. Glue also scans this directory to find `useAction()` annotations
 
 ### `actions`
 
-The location a script in 'commands' looks to source to perform a more fine-grained action (ex. run `eslint`). Glue also scans this directorie to find `requireConfig()` annotations
+The location a script in 'commands' looks to source to perform a more fine-grained action (ex. run `eslint`). Glue also scans this directorie to find `useConfig()` annotations
 
 ### `configs`
 
@@ -51,5 +51,3 @@ Any persistent state that your scripts may emit. Use of this directory is _highl
 # Miscellaneous
 
 - Most script-writing-gotchia's are due to the fact that the script file can reside in either `commands/auto/script.sh` or `commands/script.sh`
-
-- Note that for example, when `commands/auto/script.sh` runs, `GLUE_ACTIONS_DIR` may be different on first pass. This is due to the eval of `GLUE_ACTIONS_BOOTSTRAP`. So, only use these variables in functions

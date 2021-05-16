@@ -2,7 +2,7 @@
 
 For every project you want to use Glue with, a `.glue` directory is used to contain everything related to Glue: configuration, scripts, and script output.
 
-There are two types of scripts: 'command' and 'action'. 'command' scripts can simply be though of the execution of a particular task relating to a programming language. For example: `Build Go library` or `Deploy Node server`. Each 'command' script calls out to an 'action' script that does the actual command. For example `go build .` or `ansible-playbook playbook.yml`. Two categories of scripts exist to increase composability of 'actions' across languages (or even possibly domains!). Lastly, 'command' and 'action' scripts are contains in the `.glue/commands` and `.glue/actions` directories, respectively
+There are two types of scripts: 'command' and 'action'. 'command' scripts can simply be though of the execution of a particular task relating to a programming language. For example: `Build Go library` or `Deploy Node server`. Each 'command' script calls out to an 'action' script that does the actual command. For example a script containaing `go build .` or `ansible-playbook playbook.yml`. Two categories of scripts exist to increase composability of 'actions' across languages (or even possibly domains!). Lastly, 'command' and 'action' scripts are contained in the `.glue/commands` and `.glue/actions` directories, respectively
 
 The following explain the different parts of Glue, in no particular order
 
@@ -18,13 +18,13 @@ It's important to understand the execution flow of Glue when using the `cmd` sub
 
 1. When first invoking Glue, it looks for an `actions.bootstrap.*` and a `commands.bootstraps.*` file in the Glue store, setting their contents to `$GLUE_ACTIONS_BOOTSTRAP` and `$GLUE_COMMANDS_BOOTSTRAP`, respectively
 
-2. If a task is specified through the `cmd` subcommand, it looks for that task in the `.glue/commands`, then `.glue/commands/auto` directories of your project. If none are found, it displays an error. See [Finding Scripts](## Finding Scripts) for more details
+2. If a task is specified through the `cmd` subcommand, it looks for that task in the `.glue/commands`, then `.glue/commands/auto` directories of your project. If none are found, it displays an error. See [Scripts](#scripts) for more details
 
 3. Assuming the task is found, the file is executed, and the `$GLUE_ACTIONS_BOOTSTRAP`, `$GLUE_COMMANDS_BOOTSTRAP`, and `$GLUE_IS_AUTO` variables are passed into the environment. The rest of the execution is now dependent on the user's Glue store
 
-## About Scripts
+## Scripts
 
-Glue's process of finding and executing scripts makes script-writing easy to extend, modify, and compose. This functionality is only for scripts in the `commands (not `actions`) directory.
+Glue's process of finding and executing scripts makes script-writing easy to extend, modify, and compose. This functionality is only for scripts in the `commands` (not `actions`) directory.
 
 A meta task is a combination of a Project Type, a Task, and a When. Not all components need to be present and not all compositional variations are valid
 
@@ -40,7 +40,7 @@ glue cmd NodeJS_Server.build-before
 
 From this meta task, Glue searches for a script (ex. NodeJS_Server.build-before.sh`) in `.glue/commands/auto`. However, if one by the same name is found in `.glue/commands`, it uses that one instead
 
-As you can see, script names are nearly identical to the meta task. The following lists all variations and their semantics
+As you can see, script names are nearly identical to the meta task. The following code blocks lists all variations and their semantics
 
 ```sh
 # Only task
@@ -58,11 +58,9 @@ glue cmd NodeJS_Server-before
 # Invalid because it doesn't make sense
 
 # And projectType, task, when
-glue cmd NodeJS_Server-before
-glue cmd NodeJS_Server-only
+glue cmd NodeJS_Server.ci-before
+glue cmd NodeJS_Server.ci-only
 ```
-
-To know which scripts are executed in which order, see [Finding Scripts](##finding-scripts)
 
 ### Project Type
 

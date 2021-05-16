@@ -37,7 +37,7 @@ doSync() {
 	# ACTIONS, CONFIGS
 	# <directoryToSearchAnnotations:annotationName:directoryToSearchForFile>
 	local arg
-	for arg in 'commands:requireAction:actions' 'actions:requireConfig:configs'; do
+	for arg in 'commands:useAction:actions' 'actions:useConfig:configs'; do
 		local searchDir="${arg%%:*}"
 		local annotationName="${arg#*:}"; annotationName="${annotationName%:*}"
 		local fileDir="${arg##*:}"
@@ -52,7 +52,7 @@ doSync() {
 
 		# 'file' is a relative path
 		for file in "${files[@]}"; do
-			if [ -f "$GLUE_STORE/$fileDir/$file" ]; then
+			if [ -e "$GLUE_STORE/$fileDir/$file" ]; then
 				case "$file" in
 				*/*)
 					# If file contains a directory path in it
@@ -60,12 +60,36 @@ doSync() {
 					cp "$GLUE_STORE/$fileDir/$file" "$GLUE_WD/.glue/$fileDir/auto/${file%/*}"
 					;;
 				*)
-					cp "$GLUE_STORE/$fileDir/$file" "$GLUE_WD/.glue/$fileDir/auto/"
+					cp -r "$GLUE_STORE/$fileDir/$file" "$GLUE_WD/.glue/$fileDir/auto/"
 				esac
 			else
-				log.warn "Corresponding file for annotation'$annotationName()' not found in directory '$GLUE_STORE/$fileDir'. Skipping'"
+				log.warn "Corresponding file for annotation '$annotationName($file)' not found in directory '$GLUE_STORE/$fileDir'. Skipping'"
 			fi
 		done
+	done
+}
+
+doList() {
+	local -A tasks=()
+
+	shopt -s dotglob
+	shopt -s nullglob
+
+	local filePath
+	for filePath in "$GLUE_WD"/.glue/commands/* "$GLUE_WD"/.glue/commands/auto/*; do
+		local file="${filePath##*/}"
+		local task="${file%%.*}"
+
+		# Do not include files without a projectType
+		if [ "$file" = "$task" ]; then
+			continue
+		fi
+
+		tasks+=(["$task"]='')
+	done
+
+	for task in "${!tasks[@]}"; do
+		echo "$task"
 	done
 }
 
@@ -85,6 +109,7 @@ doCmd() {
 		cat "$actionsBootstrapFile"
 	)" || die "Could not get contents of '$actionsBootstrapFile'"
 
+	# -------------------- Parse Meta task ------------------- #
 	get.task "$1"
 	local task="$REPLY"
 
@@ -94,20 +119,18 @@ doCmd() {
 	get.when "$1"
 	local when="$REPLY"
 
+	# --------------------- Sanity check --------------------- #
+	if [ -z "$task" ]; then
+		die "Specifying a 'task is required"
+	fi
+
 	if [[ -v DEBUG ]]; then
 		echo "task: $task"
 		echo "projectType: $projectType"
 		echo "when: $when"
 	fi
 
-	if [ -z "$task" ]; then
-		die "Specifying a 'task is required"
-	fi
-
-	local commandDir="$GLUE_WD/.glue/commands"
-	local hasRan=no
-
-	# specify projectTypes
+	# calculate 'projectType's to run
 	local -a projectTypes=()
 	if [ -n "$projectType" ]; then
 		projectTypes=("$projectType" "")
@@ -119,7 +142,7 @@ doCmd() {
 		projectTypes=("${GLUE_USING[@]}" "")
 	fi
 
-	# specify whens
+	# calculate 'when's to run
 	local -a whens=()
 	if [ -n "$when" ]; then
 		# a blank 'when' represents a file like 'build-go.sh' compared to 'build-go-before.sh'
@@ -133,6 +156,9 @@ doCmd() {
 		whens=("-before" "" "-after")
 	fi
 
+	# run and execute files in order
+	local commandDir="$GLUE_WD/.glue/commands"
+	local hasRan=no
 	for projectType in "${projectTypes[@]}"; do
 		for when in "${whens[@]}"; do
 			helper.get_executable_file "$commandDir/${projectType}.${task}${when}"
@@ -153,7 +179,9 @@ doCmd() {
 	done
 
 	if [[ $hasRan == no ]]; then
-		printf -v msg "%s\n    -> %s\n    -> %s\nExiting" "Task '$task' did not match any files in the following directories" ".glue/commands/auto" ".glue/commands"
-		log.error "$msg"
+		log.error "Task '$task' did match any files"
+		echo "    -> Is the task contained in '.glue/commands/auto' or '.glue/commands'" >&2
+		echo "    -> Was a task like 'build', 'ci', etc. actually specified?" >&2
+		exit 1
 	fi
 }
