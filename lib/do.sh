@@ -73,39 +73,87 @@ doCmd() {
 	[[ -z $1 ]] && die 'No meta task passed'
 
 	# -------------- Store Init (*.boostrap.sh) -------------- #
-	local commandsBootstrapFile actionsBootstrapFile
-
 	helper.get_executable_file "$GLUE_STORE/commands.bootstrap"
-	commandsBootstrapFile="$REPLY"
+	local commandsBootstrapFile="$REPLY"
 	GLUE_COMMANDS_BOOTSTRAP="$(
 		cat "$commandsBootstrapFile"
-	)" || die "Could not get contents of '$commandsBootstrapFile' successfully"
+	)" || die "Could not get contents of '$commandsBootstrapFile'"
 
 	helper.get_executable_file "$GLUE_STORE/actions.bootstrap"
-	actionsBootstrapFile="$REPLY"
+	local actionsBootstrapFile="$REPLY"
 	GLUE_ACTIONS_BOOTSTRAP="$(
 		cat "$actionsBootstrapFile"
-	)" || die "Could not get contents of '$actionsBootstrapFile' successfully"
+	)" || die "Could not get contents of '$actionsBootstrapFile'"
 
-	# *this* task is the specific task like 'build', 'ci', etc., even though
-	# we still call "$1" a 'task'
 	get.task "$1"
 	local task="$REPLY"
 
 	get.projectType "$1"
 	local projectType="$REPLY"
 
+	get.when "$1"
+	local when="$REPLY"
+
+	if [[ -v DEBUG ]]; then
+		echo "task: $task"
+		echo "projectType: $projectType"
+		echo "when: $when"
+	fi
+
+	if [ -z "$task" ]; then
+		die "Specifying a 'task is required"
+	fi
+
 	local commandDir="$GLUE_WD/.glue/commands"
-	if [[ -z $projectType ]]; then
-		# no specific language on cli. run all specified languages as per glue.sh
+	local hasRan=no
+
+	# specify projectTypes
+	local -a projectTypes=()
+	if [ -n "$projectType" ]; then
+		projectTypes=("$projectType" "")
+	else
 		[[ ! -v GLUE_USING ]] && {
-			die "Please set 'using' in the Glue project configuration (glue.sh)"
+			die "Must set the 'using' variable in the Glue project configuration (glue.sh)"
 			return
 		}
+		projectTypes=("${GLUE_USING[@]}" "")
+	fi
 
-		helper.run_task_scripts "$task" "$commandDir" "${GLUE_USING[@]}"
+	# specify whens
+	local -a whens=()
+	if [ -n "$when" ]; then
+		# a blank 'when' represents a file like 'build-go.sh' compared to 'build-go-before.sh'
+		case "$when" in
+			before) whens=("-before") ;;
+			only) whens=("") ;;
+			after) whens=("-after") ;;
+			*) die "When '$when' not valid. Must be of either 'before', 'only', or 'after'"
+		esac
 	else
-		# run only the command specific to a language
-		helper.run_task_and_projectType_scripts "$task" "$commandDir" "$projectType"
+		whens=("-before" "" "-after")
+	fi
+
+	for projectType in "${projectTypes[@]}"; do
+		for when in "${whens[@]}"; do
+			helper.get_executable_file "$commandDir/${projectType}.${task}${when}"
+			local overrideFile="$REPLY"
+
+			helper.get_executable_file "$commandDir/auto/${projectType}.${task}${when}"
+			local autoFile="$REPLY"
+
+			if [ -f "$overrideFile" ]; then
+				helper.exec_file "$overrideFile" "no"
+				hasRan=yes
+			elif [ -f "$autoFile" ]; then
+				helper.exec_file "$autoFile" "yes"
+				hasRan=yes
+			fi
+		done
+
+	done
+
+	if [[ $hasRan == no ]]; then
+		printf -v msg "%s\n    -> %s\n    -> %s\nExiting" "Task '$task' did not match any files in the following directories" ".glue/commands/auto" ".glue/commands"
+		log.error "$msg"
 	fi
 }

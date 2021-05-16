@@ -1,8 +1,6 @@
 #!/usr/bin/env bats
 
-# load ./test_utils
-source ../lib/helper.sh
-source ../lib/util.sh
+source ../lib/util/get.sh
 
 @test "get.task" {
 	local input result expected
@@ -23,7 +21,9 @@ source ../lib/util.sh
 	for i in "${!tests[@]}"; do
 		input="$i"
 		expected="${tests[$i]}"
-		result="$(get.task "$input")"
+
+		get.task "$input"
+		result="$REPLY"
 
 		# {
 		# 	echo ---
@@ -55,7 +55,9 @@ source ../lib/util.sh
 	for i in "${!tests[@]}"; do
 		input="$i"
 		expected="${tests[$i]}"
-		result="$(get.projectType "$input")"
+
+		get.projectType "$input"
+		result="$REPLY"
 
 		# {
 		# 	echo ---
@@ -87,7 +89,9 @@ source ../lib/util.sh
 	for i in "${!tests[@]}"; do
 		input="$i"
 		expected="${tests[$i]}"
-		result="$(get.when "$input")"
+
+		get.when "$input"
+		result="$REPLY"
 
 		# {
 		# 	echo ---

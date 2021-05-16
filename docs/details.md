@@ -22,15 +22,55 @@ It's important to understand the execution flow of Glue when using the `cmd` sub
 
 3. Assuming the task is found, the file is executed, and the `$GLUE_ACTIONS_BOOTSTRAP`, `$GLUE_COMMANDS_BOOTSTRAP`, and `$GLUE_IS_AUTO` variables are passed into the environment. The rest of the execution is now dependent on the user's Glue store
 
-## Finding Scripts
+## About Scripts
 
-Glue's process of finding and executing a script file in accordance to a user's specified meta task makes script-writing easy to extend and modify. This functionality is only for scripts in `commands`, _not_ `actions` (you would have to implement it yourself).
+Glue's process of finding and executing scripts makes script-writing easy to extend, modify, and compose. This functionality is only for scripts in the `commands (not `actions`) directory.
 
-A meta task is a combination of a Project Type, a Task, and a When
+A meta task is a combination of a Project Type, a Task, and a When. Not all components need to be present and not all compositional variations are valid
 
-For each of the following headings, a file structure and commands to execute those particular files are shown.
+For example
 
-Note that Glue looks for a particular script (ex. NodeJS_Server.build.sh`) in `.glue/commands/auto`. However, if one by the same name is found in `.glue/commands`, it uses that instead
+```sh
+# glue cmd [projectType]<.task>[-when]
+
+glue cmd NodeJS_Server.build-before
+```
+
+`NodeJS_Server` is the project type, `build` is the task, and `before` is the 'when'
+
+From this meta task, Glue searches for a script (ex. NodeJS_Server.build-before.sh`) in `.glue/commands/auto`. However, if one by the same name is found in `.glue/commands`, it uses that one instead
+
+As you can see, script names are nearly identical to the meta task. The following lists all variations and their semantics
+
+```sh
+# Only task
+glue cmd build
+# Runs all 'build' scripts for all projectTypes specified in `build.sh`.
+# This also runs the generic build script (ex. build.sh) last
+
+# And projectType, task
+glue cmd NodeJS_Server.build
+# Runs all 'build' scripts for the NodeJS_Server project type. This
+# also runs the generic build script (ex. build.sh) last
+
+# And task, when
+glue cmd NodeJS_Server-before
+# Invalid because it doesn't make sense
+
+# And projectType, task, when
+glue cmd NodeJS_Server-before
+glue cmd NodeJS_Server-only
+```
+
+To know which scripts are executed in which order, see [Finding Scripts](##finding-scripts)
+
+### Project Type
+
+```sh
+glue cmd NodeJS_Server.build
+```
+
+Runs the 'build' script for the NodeJS_Server projectType
 
 ### When
 
@@ -71,49 +111,17 @@ commands/NodeJS_Server.build-after.sh
 
 In this case, Glue will execute `NodeJS_Server.build.sh`, then `NodeJS_Server.build-after.sh`. By doing this, you extend the functionality of your build scripts. Note that omitting the 'When' portion would cause only the script in `commands/NodeJS_Server.build.sh` to execute
 
-### Project Type
-
-```sh
-glue cmd NodeJS_Server
-```
-
-TODO: This shouldn't do anything and return an error. It doesn't make sense to execute all tasks associated with a projectType in order.
-
-### No Project Type and No Task
+### Task
 
 ```sh
 glue cmd build
 ```
 
-This performs the [Project Type and Task](###project-type-and-task) steps for every projectType specified in your `glue.sh`.
+This performs the build task for every projectType specified in your `glue.sh`.
 
-For example, if in your `glue.sh`, you have `using=("NodeJS_Server Python")`, it will functionality be the same as typing
+For example, if in your `glue.sh`, you have `using=("NodeJS_Server Python")`, it will functionality be the same as the following
 
 ```sh
 glue cmd NodeJS_Server.build
 glue cmd Python.build
 ```
-
-## Script Names
-
-Scripts have to be named a particular way for Glue to discover them. It meant to be nearly identical to the argument specified when using the subcommand `cmd`. The following shows the format
-
-TODO: check to be sure all of these are valid
-
-```txt
-[projectType]<.task>[-when].<fileExtension>
-
-- With all the parts:
-NodeJS_Server.ci-before.sh
-
-- With only 'projectType' missing
-ci-before.sh
-
-- With only 'when' missing
-NodeJS_Server.ci.sh
-
-- With both 'projectType' and 'when' missing
-ci.sh
-```
-
-To know which scripts are executed in which order, see [Finding Scripts](##finding-scripts)

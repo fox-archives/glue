@@ -44,10 +44,13 @@ get.projectType() {
 	REPLY=
 
 	# projectType exists iff . exists
-	if [[ $projectType == *.* ]]; then
-		projectType="${projectType%%.*}"
-		REPLY="$projectType"
+	projectType="${projectType%%.*}"
+
+	if [ "$projectType" = "$1" ]; then
+		projectType=
 	fi
+
+	REPLY="$projectType"
 }
 
 # Return the name of 'when'
@@ -55,12 +58,10 @@ get.when() {
 	local when="$1"
 	REPLY=
 
-	if [[ $when == *.* ]]; then
-		when="${when##*.}"
-	fi
+	when="${when##*-}"
 
-	if [[ $when == *-* ]]; then
-		when="${when##*-}"
+	if [ "$when" = "$1" ]; then
+		when=
 	fi
 
 	REPLY="$when"
