@@ -36,7 +36,7 @@ Some benefits of Glue include
 - Scripts are automatically copied to each project and stored in version control (Reproducible Builds / Transparency / Traceability)
 - Escape hatches to override or modify the behavior of any particular script
 - Written in pure Bash
-- Writen for speed (Uses subshells quite sporadically)
+- Writen for speed (Uses subshells quite sporadically (excluding the 'sync' command))
 - Configuration decoupled from traditional configuration locations
 
 Some detraments of Glue include
@@ -56,4 +56,5 @@ TODOS
 
 - autocomplete
 - greadlink readlink -f check
-- list dependencies in regular file instead of having requireConfig annotatinos?
+- ad hoc action scripts
+- TODO: single bootstrap file

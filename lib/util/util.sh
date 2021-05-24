@@ -26,8 +26,17 @@ util.show_help() {
 	        Sync changes from the Glue store to the current project.
 	        This overrides and replaces the content in 'auto' directories
 
+	    list
+	        Lists all projectTypes of the current project
+
+	    print
+	        Prints the script about to be executed
+
+	    act
+	        Execute an action
+
 	    cmd <metaTask>
-	        Perform a meta task. See \`docs/details.md\` for more information
+	        Execute a meta task (command)
 
 	Flags:
 	    --help

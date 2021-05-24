@@ -43,8 +43,16 @@ main() {
 			doSync "$@"
 			;;
 		list)
-			sync
+			shift
 			doList "$@"
+			;;
+		print)
+			shift
+			doPrint "$@"
+			;;
+		act)
+			shift
+			doAct "$@"
 			;;
 		cmd)
 			shift

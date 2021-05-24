@@ -93,6 +93,72 @@ doList() {
 	done
 }
 
+doPrint() {
+	[[ -z $1 ]] && die 'No action file passed'
+
+	# TODO: code duplication
+	helper.get_executable_file "$GLUE_WD/.glue/actions/$1"
+	local overrideFile="$REPLY"
+
+	helper.get_executable_file "$GLUE_WD/.glue/actions/auto/$1"
+	local autoFile="$REPLY"
+
+	hasRan=no
+	if [ -f "$overrideFile" ]; then
+		helper.exec_file "$overrideFile" "no"
+		hasRan=yes
+	elif [ -f "$autoFile" ]; then
+		helper.exec_file "$autoFile" "yes"
+		hasRan=yes
+	fi
+
+	if [[ $hasRan == no ]]; then
+		log.error "Action file '$1' did match any files"
+		echo "    -> Is the task contained in '.glue/actions/auto' or '.glue/actions'" >&2
+		exit 1
+	fi
+}
+
+# TODO: pass option whether to explicitly use 'auto' or non-auto file
+doAct() {
+	[[ -z $1 ]] && die 'No action file passed'
+
+	# -------------- Store Init (*.boostrap.sh) -------------- #
+	helper.get_executable_file "$GLUE_STORE/commands.bootstrap"
+	local commandsBootstrapFile="$REPLY"
+	GLUE_COMMANDS_BOOTSTRAP="$(
+		cat "$commandsBootstrapFile"
+	)" || die "Could not get contents of '$commandsBootstrapFile'"
+
+	helper.get_executable_file "$GLUE_STORE/actions.bootstrap"
+	local actionsBootstrapFile="$REPLY"
+	GLUE_ACTIONS_BOOTSTRAP="$(
+		cat "$actionsBootstrapFile"
+	)" || die "Could not get contents of '$actionsBootstrapFile'"
+
+
+	helper.get_executable_file "$GLUE_WD/.glue/actions/$1"
+	local overrideFile="$REPLY"
+
+	helper.get_executable_file "$GLUE_WD/.glue/actions/auto/$1"
+	local autoFile="$REPLY"
+
+	hasRan=no
+	if [ -f "$overrideFile" ]; then
+		helper.exec_file "$overrideFile" "no"
+		hasRan=yes
+	elif [ -f "$autoFile" ]; then
+		helper.exec_file "$autoFile" "yes"
+		hasRan=yes
+	fi
+
+	if [[ $hasRan == no ]]; then
+		log.error "Action file '$1' did match any files"
+		echo "    -> Is the task contained in '.glue/actions/auto' or '.glue/actions'" >&2
+		exit 1
+	fi
+}
+
 doCmd() {
 	[[ -z $1 ]] && die 'No meta task passed'
 
@@ -157,14 +223,13 @@ doCmd() {
 	fi
 
 	# run and execute files in order
-	local commandDir="$GLUE_WD/.glue/commands"
 	local hasRan=no
 	for projectType in "${projectTypes[@]}"; do
 		for when in "${whens[@]}"; do
-			helper.get_executable_file "$commandDir/${projectType}.${task}${when}"
+			helper.get_executable_file "$GLUE_WD/.glue/commands/${projectType}.${task}${when}"
 			local overrideFile="$REPLY"
 
-			helper.get_executable_file "$commandDir/auto/${projectType}.${task}${when}"
+			helper.get_executable_file "$GLUE_WD/.glue/commands/auto/${projectType}.${task}${when}"
 			local autoFile="$REPLY"
 
 			if [ -f "$overrideFile" ]; then
