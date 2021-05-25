@@ -12,13 +12,9 @@ An absolute path to the current project. In other words, the directory that cont
 
 Whether or not the currently running script has a parent folder of 'auto'. Has a value of either `yes` or `no`.
 
-### `GLUE_COMMANDS_BOOTSTRAP`
+### `GLUE_BOOTSTRAP`
 
-The stage 1 bootstrap commands to executed when a script under the 'commands' directory executes or is sourced
-
-### `GLUE_ACTIONS_BOOTSTRAP`
-
-The stage 1 bootstrap commands to be executed when a script under the 'actions' directory executes or is sourced
+The stage bootstrap commands to executed when a script under the 'commands' or 'actions' directory executes or is sourced. This has the contents of the `boostrap.*` file in your Glue store
 
 ## Directories
 

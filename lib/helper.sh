@@ -51,11 +51,9 @@ helper.exec_file() {
 
 	if [ -f "$file" ]; then
 		if [ -x "$file" ]; then
-			# shellcheck disable=SC2097
 			GLUE_WD="$GLUE_WD" \
 				GLUE_IS_AUTO="$isAuto" \
-				GLUE_COMMANDS_BOOTSTRAP="$GLUE_COMMANDS_BOOTSTRAP" \
-				GLUE_ACTIONS_BOOTSTRAP="$GLUE_ACTIONS_BOOTSTRAP" \
+				GLUE_BOOTSTRAP="$GLUE_BOOTSTRAP" \
 				"$file"
 			return
 		else

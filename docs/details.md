@@ -16,11 +16,11 @@ Because Glue is general, you can use any executable to evaluate your scripts (wh
 
 It's important to understand the execution flow of Glue when using the `cmd` subcommand to run a particular task. The following is an overview
 
-1. When first invoking Glue, it looks for an `actions.bootstrap.*` and a `commands.bootstraps.*` file in the Glue store, setting their contents to `$GLUE_ACTIONS_BOOTSTRAP` and `$GLUE_COMMANDS_BOOTSTRAP`, respectively
+1. When first invoking Glue, it looks for an `bootstrap.*` file in the Glue store, setting its contents to `$GLUE_BOOTSTRAP`
 
 2. If a task is specified through the `cmd` subcommand, it looks for that task in the `.glue/commands`, then `.glue/commands/auto` directories of your project. If none are found, it displays an error. See [Scripts](#scripts) for more details
 
-3. Assuming the task is found, the file is executed, and the `$GLUE_ACTIONS_BOOTSTRAP`, `$GLUE_COMMANDS_BOOTSTRAP`, and `$GLUE_IS_AUTO` variables are passed into the environment. The rest of the execution is now dependent on the user's Glue store
+3. Assuming the task is found, the file is executed, and the `$GLUE_BOOTSTRAP`, `$GLUE_WD`, and `$GLUE_IS_AUTO` variables are passed into the environment. The rest of the execution is now dependent on the user's Glue store
 
 ## Scripts
 

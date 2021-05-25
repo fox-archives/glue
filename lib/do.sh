@@ -22,6 +22,11 @@ doSync() {
 
 
 	# ------------------------- Files ------------------------ #
+	# COMMON:
+	dir="common"
+	find "$GLUE_STORE/$dir/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -print0 \
+				| xargs -r0I '{}' -- cp '{}' "$GLUE_WD/.glue/$dir/auto/"
+
 	# COMMANDS:
 	local projectTypeStr
 	for projectType in "${GLUE_USING[@]}"; do
@@ -163,17 +168,9 @@ doCmd() {
 	[[ -z $1 ]] && die 'No meta task passed'
 
 	# -------------- Store Init (*.boostrap.sh) -------------- #
-	helper.get_executable_file "$GLUE_STORE/commands.bootstrap"
-	local commandsBootstrapFile="$REPLY"
-	GLUE_COMMANDS_BOOTSTRAP="$(
-		cat "$commandsBootstrapFile"
-	)" || die "Could not get contents of '$commandsBootstrapFile'"
-
-	helper.get_executable_file "$GLUE_STORE/actions.bootstrap"
-	local actionsBootstrapFile="$REPLY"
-	GLUE_ACTIONS_BOOTSTRAP="$(
-		cat "$actionsBootstrapFile"
-	)" || die "Could not get contents of '$actionsBootstrapFile'"
+	helper.get_executable_file "$GLUE_STORE/bootstrap"
+	local bootstrapFile="$REPLY"
+	GLUE_BOOTSTRAP=$(<"$bootstrapFile") || die "Could not get contents of '$bootstrapFile'"
 
 	# -------------------- Parse Meta task ------------------- #
 	get.task "$1"

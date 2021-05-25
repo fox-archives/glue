@@ -4,7 +4,7 @@ set -Eo pipefail
 # source code directory
 GLUE_ROOT_DIR="$(readlink -f "${BASH_SOURCE[0]}")" || die 'Irrecoverable failure'
 GLUE_ROOT_DIR="${GLUE_ROOT_DIR%/*}"
-source "$GLUE_ROOT_DIR/lib/util/util.sh" || { echo "Erorr: Could not source file"; exit 1; }
+source "$GLUE_ROOT_DIR/lib/util/util.sh" || { echo "Error: Could not source file"; exit 1; }
 source "$GLUE_ROOT_DIR/lib/util/get.sh" || util.source_error
 source "$GLUE_ROOT_DIR/lib/util/init.sh" || util.source_error
 source "$GLUE_ROOT_DIR/lib/util/log.sh" || util.source_error
