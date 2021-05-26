@@ -49,6 +49,7 @@ helper.get_executable_file() {
 helper.exec_file() {
 	file="$1"
 	isAuto="$2"
+	shift; shift;
 
 	if [[ ${file::1} != / && ${file::2} != ./ ]]; then
 		file="./$file"
@@ -59,7 +60,7 @@ helper.exec_file() {
 			GLUE_WD="$GLUE_WD" \
 				GLUE_IS_AUTO="$isAuto" \
 				GLUE_BOOTSTRAP="$GLUE_BOOTSTRAP" \
-				"$file"
+				"$file" "$@"
 			return
 		else
 			die "File '$file' exists, but is not executable. Bailing early to prevent out of order execution"

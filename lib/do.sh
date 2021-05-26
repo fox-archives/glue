@@ -143,7 +143,7 @@ doAct() {
 }
 
 doCmd() {
-	[[ -z $1 ]] && die 'No meta task passed'
+	[[ -z ${argsCommands[1]} ]] && die 'No meta task passed'
 
 	# -------------- Store Init (*.boostrap.sh) -------------- #
 	helper.get_executable_file "$GLUE_STORE/bootstrap"
@@ -151,13 +151,13 @@ doCmd() {
 	GLUE_BOOTSTRAP=$(<"$bootstrapFile") || die "Could not get contents of bootstrap file '$bootstrapFile'"
 
 	# -------------------- Parse Meta task ------------------- #
-	get.task "$1"
+	get.task "${argsCommands[1]}"
 	local task="$REPLY"
 
-	get.projectType "$1"
+	get.projectType "${argsCommands[1]}"
 	local projectType="$REPLY"
 
-	get.when "$1"
+	get.when "${argsCommands[1]}"
 	local when="$REPLY"
 
 	# --------------------- Sanity check --------------------- #
@@ -208,10 +208,10 @@ doCmd() {
 			local autoFile="$REPLY"
 
 			if [ -f "$overrideFile" ]; then
-				helper.exec_file "$overrideFile" "no"
+				helper.exec_file "$overrideFile" "no" "${argsPostHyphen[@]}"
 				hasRan=yes
 			elif [ -f "$autoFile" ]; then
-				helper.exec_file "$autoFile" "yes"
+				helper.exec_file "$autoFile" "yes" "${argsPostHyphen[@]}"
 				hasRan=yes
 			fi
 		done

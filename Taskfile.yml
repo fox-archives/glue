@@ -1,0 +1,6 @@
+version: '3'
+
+tasks:
+  run:
+    cmds:
+      - ./glue.sh {{.CLI_ARGS}}
