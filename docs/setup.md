@@ -10,15 +10,13 @@ store="$HOME/repos/glue-store"
 
 ## Local Configuration
 
-For every project you wish to manage with `Glue`, create a `glue.sh` at the root of the directory. It contains the project types you wish to use. These are ran in order.
+For every project you wish to manage with `Glue`, create a `glue.toml` at the root of the directory. It contains the project types you wish to use. These are ran in order.
 
 For example, if you specify `glue cmd build`, it will first execute `./commands/NodeJS_Server.build.sh`, then `./commands/Python.build.sh` (in addition to potentially executing many other scripts, which isn't important here for brevity's sake)
 
-```bash
-# shellcheck shell=bash
-
-# shellcheck disable=SC2034
-using=("NodeJS_Server" "Python")
+```toml
+# TODO: make array work
+using=["NodeJS_Server", "Python"]
 ```
 
 ## Environment Variables

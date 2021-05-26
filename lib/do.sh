@@ -2,30 +2,16 @@
 
 doSync() {
 	# ------------------------- Nuke ------------------------- #
-	mkdir -p "$GLUE_WD"/.glue/{actions,commands,common,configs,output,state}/auto/
+	mkdir -p "$GLUE_WD"/.glue/{actions,commands,common,configs,output}/auto
 	find "$GLUE_WD"/.glue/{actions,commands,common,configs,output}/auto/ \
-			-ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -print0 \
-		| xargs -r0 -- rm
-
-	find "$GLUE_WD"/.glue/{actions,commands,common,configs,output}/auto/ \
-			-ignore_readdir_race -mindepth 1 -maxdepth 1 -type d -print0 \
+			-ignore_readdir_race -mindepth 1 -maxdepth 1 -print0 \
 		| xargs -r0 -- rm -rf
 
-
-	# ---------------------- Directories --------------------- #
-	# ACTIONS, COMMANDS, COMMON
-	local dir
-	for dir in actions commands common; do
-		find "$GLUE_STORE/$dir/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type d -print0 \
-				| xargs -r0I '{}' -- cp -r '{}' "$GLUE_WD/.glue/$dir/auto/"
-	done
-
-
-	# ------------------------- Files ------------------------ #
+	# ------------------------- Copy ------------------------- #
 	# COMMON:
 	dir="common"
-	find "$GLUE_STORE/$dir/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -print0 \
-				| xargs -r0I '{}' -- cp '{}' "$GLUE_WD/.glue/$dir/auto/"
+	find "$GLUE_STORE/$dir/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -print0 \
+		| xargs -r0I '{}' -- cp -r '{}' "$GLUE_WD/.glue/$dir/auto/"
 
 	# COMMANDS:
 	local projectTypeStr
@@ -68,7 +54,7 @@ doSync() {
 					cp -r "$GLUE_STORE/$fileDir/$file" "$GLUE_WD/.glue/$fileDir/auto/"
 				esac
 			else
-				log.warn "Corresponding file for annotation '$annotationName($file)' not found in directory '$GLUE_STORE/$fileDir'. Skipping'"
+				log.warn "Corresponding file or directory for annotation '$annotationName($file)' not found in directory '$GLUE_STORE/$fileDir'. Skipping'"
 			fi
 		done
 	done
@@ -119,7 +105,7 @@ doPrint() {
 
 	if [[ $hasRan == no ]]; then
 		log.error "Action file '$1' did match any files"
-		echo "    -> Is the task contained in '.glue/actions/auto' or '.glue/actions'" >&2
+		echo "    -> Is the task contained in '.glue/actions/auto' or '.glue/actions'?" >&2
 		exit 1
 	fi
 }
@@ -129,17 +115,9 @@ doAct() {
 	[[ -z $1 ]] && die 'No action file passed'
 
 	# -------------- Store Init (*.boostrap.sh) -------------- #
-	helper.get_executable_file "$GLUE_STORE/commands.bootstrap"
-	local commandsBootstrapFile="$REPLY"
-	GLUE_COMMANDS_BOOTSTRAP="$(
-		cat "$commandsBootstrapFile"
-	)" || die "Could not get contents of '$commandsBootstrapFile'"
-
-	helper.get_executable_file "$GLUE_STORE/actions.bootstrap"
-	local actionsBootstrapFile="$REPLY"
-	GLUE_ACTIONS_BOOTSTRAP="$(
-		cat "$actionsBootstrapFile"
-	)" || die "Could not get contents of '$actionsBootstrapFile'"
+	helper.get_executable_file "$GLUE_STORE/bootstrap"
+	local bootstrapFile="$REPLY"
+	GLUE_BOOTSTRAP=$(<"$bootstrapFile") || die "Could not get contents of bootstrap file '$bootstrapFile'"
 
 
 	helper.get_executable_file "$GLUE_WD/.glue/actions/$1"
@@ -159,7 +137,7 @@ doAct() {
 
 	if [[ $hasRan == no ]]; then
 		log.error "Action file '$1' did match any files"
-		echo "    -> Is the task contained in '.glue/actions/auto' or '.glue/actions'" >&2
+		echo "    -> Is the task contained in '.glue/actions/auto' or '.glue/actions'?" >&2
 		exit 1
 	fi
 }
@@ -170,7 +148,7 @@ doCmd() {
 	# -------------- Store Init (*.boostrap.sh) -------------- #
 	helper.get_executable_file "$GLUE_STORE/bootstrap"
 	local bootstrapFile="$REPLY"
-	GLUE_BOOTSTRAP=$(<"$bootstrapFile") || die "Could not get contents of '$bootstrapFile'"
+	GLUE_BOOTSTRAP=$(<"$bootstrapFile") || die "Could not get contents of bootstrap file '$bootstrapFile'"
 
 	# -------------------- Parse Meta task ------------------- #
 	get.task "$1"
@@ -199,7 +177,7 @@ doCmd() {
 		projectTypes=("$projectType" "")
 	else
 		[[ ! -v GLUE_USING ]] && {
-			die "Must set the 'using' variable in the Glue project configuration (glue.sh)"
+			die "Must set the 'using' variable in the Glue project configuration (glue.toml)"
 			return
 		}
 		projectTypes=("${GLUE_USING[@]}" "")
@@ -242,7 +220,7 @@ doCmd() {
 
 	if [[ $hasRan == no ]]; then
 		log.error "Task '$task' did match any files"
-		echo "    -> Is the task contained in '.glue/commands/auto' or '.glue/commands'" >&2
+		echo "    -> Is the task contained in '.glue/commands/auto' or '.glue/commands'?" >&2
 		echo "    -> Was a task like 'build', 'ci', etc. actually specified?" >&2
 		exit 1
 	fi

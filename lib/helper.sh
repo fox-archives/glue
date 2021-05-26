@@ -1,8 +1,10 @@
 # shellcheck shell=bash
 
-# Checks to see if a valid executable exists at a location.
+# @description Checks to see if a valid executable exists at a location.
 # For example, when passed in 'some-file', it may return 'some-file.py'
 # or 'some-file.sh', depending on what is in the directory
+#
+# @arg $1 Name of potential executable file, without the file extension
 helper.get_executable_file() {
 	local file="$1"
 	REPLY=
@@ -39,8 +41,11 @@ helper.get_executable_file() {
 	REPLY="$firstFileMatch"
 }
 
-# execs a file if it exists, but prints a warning if
+# @description execs a file if it exists, but prints a warning if
 # the file is there, but not executable
+#
+# @arg $1 File to execute
+# @arg $2 Value to set $GLUE_IS_AUTO when executing file
 helper.exec_file() {
 	file="$1"
 	isAuto="$2"

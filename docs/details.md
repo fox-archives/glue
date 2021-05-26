@@ -115,9 +115,9 @@ In this case, Glue will execute `NodeJS_Server.build.sh`, then `NodeJS_Server.bu
 glue cmd build
 ```
 
-This performs the build task for every projectType specified in your `glue.sh`.
+This performs the build task for every projectType specified in your `glue.toml`.
 
-For example, if in your `glue.sh`, you have `using=("NodeJS_Server Python")`, it will functionality be the same as the following
+For example, if in your `glue.toml`, you have `using=["NodeJS_Server", "Python"]`, it will functionality be the same as the following
 
 ```sh
 glue cmd NodeJS_Server.build

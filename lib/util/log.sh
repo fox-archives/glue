@@ -1,5 +1,19 @@
 # shellcheck shell=bash
+# @file log.sh
+# @brief Logging functions
+# @description Contains logging functions for the library
 
+# @description Logs an error and exits
+#
+# @arg $1 string Message to print
+#
+# @example
+#   die 'Could not read file'
+#   # Error: Could not read file. Exiting
+#
+# @exitcode 1 Exits with `1`
+#
+# @see log.error
 die() {
 	if [[ -n $* ]]; then
 		log.error "$*. Exiting"
@@ -10,7 +24,9 @@ die() {
 	exit 1
 }
 
-# Print info
+# @description Prints information in blue
+#
+# @arg $1 string Message to print
 log.info() {
 	if [[ -v NO_COLOR || $TERM = dumb ]]; then
 		printf "%s\n" "Info: $*"
@@ -19,7 +35,9 @@ log.info() {
 	fi
 }
 
-# Print warning
+# @description Prints warning in yellow
+#
+# @arg $1 string Message to print
 log.warn() {
 	if [[ -v NO_COLOR || $TERM = dumb ]]; then
 		printf "%s\n" "Warn: $*"
@@ -28,7 +46,9 @@ log.warn() {
 	fi
 }
 
-# Print error
+# @description Prints error in red
+#
+# @arg $1 string Message to print
 log.error() {
 	if [[ -v NO_COLOR || $TERM = dumb ]]; then
 		printf "%s\n" "Error: $*"

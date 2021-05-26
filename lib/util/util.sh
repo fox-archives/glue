@@ -1,22 +1,21 @@
 # shellcheck shell=bash
+# @file util.sh
+# @brief Utility functions
+# @description Contains utility functions for the library
 
+
+# @description Prints 'Could not source file' error and exits
+#
+# @example
+#   source ./non-existent-file || util.source_error
+#
+# @exitcode 1 Exits with `1`
 util.source_error() {
 	echo "Error: Could not source file"
 	exit 1
 }
 
-# Strips the prefix from an absolute path
-util.strip_absolute_path() {
-	prefix="$1"
-	path="$2"
-
-	prefixLength="${#1}"
-
-	if [[ $prefix = "${path::$prefixLength}" ]]; then
-		REPLY="${path:$prefixLength:}"
-	fi
-}
-
+# @description Prints the help menu
 util.show_help() {
 	cat <<-EOF
 	glue [flags] <command>
@@ -32,7 +31,7 @@ util.show_help() {
 	    print
 	        Prints the script about to be executed
 
-	    act
+	    act <actionFile>
 	        Execute an action
 
 	    cmd <metaTask>
@@ -47,6 +46,7 @@ util.show_help() {
 	EOF
 }
 
+# @description Prints the current version
 util.show_version() {
 	cat <<-EOF
 	0.3

@@ -19,15 +19,13 @@ main() {
 	local initFile="${GLUE_INIT_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/glue/init.sh}"
 	[[ -f $initFile ]] && source "$initFile" # exposes: store
 
-	readonly GLUE_STORE="${GLUE_STORE:-${store:-$HOME/.glue-store}}"
+	GLUE_STORE="${GLUE_STORE:-${store:-$HOME/.glue-store}}"
 	unset -v initFile store
 
 	# ----------------- Local Init (glue.sh) ----------------- #
-	local glueFile="$GLUE_WD/glue.sh"
-	[[ -f $glueFile ]] && source "$glueFile" # exposes: using
-
-	readonly -a GLUE_USING=("${using[@]}")
-	unset -v glueFile using
+	local glueFile="$GLUE_WD/glue.toml"
+	readonly -a GLUE_USING=("$(sed 's|using="\(.*\)"|\1|g' "$glueFile")")
+	unset -v glueFile
 
 	# ------------------------- Main ------------------------- #
 	for arg; do
