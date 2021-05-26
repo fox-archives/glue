@@ -21,7 +21,7 @@ declare -r newVersion="$REPLY"
 
 # Ensure new version is valid (does not already exist)
 if [ -n "$(git tag -l "v$newVersion")" ]; then
-	# TODO: ensure there is no tag that exists that is greater than it
+	# TODO: ensure there are no tag sthat exists that are greater than it
 	die 'Version already exists in a Git tag'
 fi
 
@@ -33,7 +33,7 @@ sed -i -e "s|\(PROGRAM_VERSION=\"\).*\(\"\)|\1${currentVersion}\2|g" glue.sh
 
 # Local Release
 git tag -a "v$newVersion" -m "Release $newVersion" HEAD
-git push --tags origin HEAD
+git push --follow-tags origin HEAD
 
 declare -a args=()
 if [ -f CHANGELOG.md ]; then

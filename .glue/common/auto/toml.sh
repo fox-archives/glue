@@ -20,8 +20,6 @@ toml.get_key() {
 			continue
 		fi
 
-		echo "line: $line"
-
 		shopt -s extglob
 
 		key="${line%%=*}"

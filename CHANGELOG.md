@@ -1,7 +1,4 @@
-# 0.6.0
+# [](https://github.com/eankeen/glue/compare/v0.6.1...v) (2021-05-26)
 
-- Swap execution order of scripts. Now, general scripts execute before their specialized projectType counterparts
 
-# 0.5.0
 
-- First release
