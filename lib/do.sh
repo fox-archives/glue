@@ -174,13 +174,13 @@ doCmd() {
 	# calculate 'projectType's to run
 	local -a projectTypes=()
 	if [ -n "$projectType" ]; then
-		projectTypes=("$projectType" "")
+		projectTypes=("" "$projectType")
 	else
 		[[ ! -v GLUE_USING ]] && {
 			die "Must set the 'using' variable in the Glue project configuration (glue.toml)"
 			return
 		}
-		projectTypes=("${GLUE_USING[@]}" "")
+		projectTypes=("" "${GLUE_USING[@]}")
 	fi
 
 	# calculate 'when's to run
