@@ -2,24 +2,26 @@
 
 doSync() {
 	# ------------------------- Nuke ------------------------- #
+	log.info "Nuking all files and dirs in '*/auto/'"
 	mkdir -p "$GLUE_WD"/.glue/{actions,commands,common,configs,output}/auto
 	find "$GLUE_WD"/.glue/{actions,commands,common,configs,output}/auto/ \
 			-ignore_readdir_race -mindepth 1 -maxdepth 1 -print0 \
 		| xargs -r0 -- rm -rf
 
 	# ------------------------- Copy ------------------------- #
-	# COMMON:
-	dir="common"
+	# COMMON
+	log.info "Copying all files and dirs from '\$GLUE_STORE/common/' to 'common/'"
+	local dir="common"
 	find "$GLUE_STORE/$dir/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -print0 \
 		| xargs -r0I '{}' -- cp -r '{}' "$GLUE_WD/.glue/$dir/auto/"
 
-	# COMMANDS:
+	# COMMANDS
+	log.info "Copying all files and dirs from '\$GLUE_STORE/commands' to 'commands/'"
 	local projectTypeStr
 	for projectType in "${GLUE_USING[@]}"; do
 		projectTypeStr="${projectTypeStr}${projectType}\|"
 	done
 	[[ "${#GLUE_USING[@]}" -gt 0 ]] && projectTypeStr="${projectTypeStr:: -2}"
-
 	find "$GLUE_STORE/commands/" \
 			-ignore_readdir_race -mindepth 1 -maxdepth 1 -type f \
 			-regextype posix-basic -regex "^.*/\($projectTypeStr\)\..*$" -print0 \
@@ -32,6 +34,8 @@ doSync() {
 		local searchDir="${arg%%:*}"
 		local annotationName="${arg#*:}"; annotationName="${annotationName%:*}"
 		local fileDir="${arg##*:}"
+
+		log.info "Copying proper files and dirs from '\$GLUE_STORE/$searchDir to '$fileDir/"
 
 		local -a files=()
 		readarray -d $'\0' files < <(find "$GLUE_WD"/.glue/$searchDir/{,auto/} -ignore_readdir_race -type f \

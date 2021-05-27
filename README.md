@@ -42,7 +42,7 @@ Some benefits of Glue include
 Some detraments of Glue include
 
 - User scripts can have a boilerplate nature due to the inherit caveats of the `.glue` folder structure and the fact that Glue is a task runner framework, rather than a script library
-- It's general nature means you must write bootstrap strings to be eval'd later given the language of implementation of your script files (see `actions.bootstrap.sh`, etc.)
+- It's general nature means you must write bootstrap strings to be eval'd later given the language of implementation of your script files (see `bootstrap.sh` in a Glue store)
 
 ### Details
 
@@ -56,5 +56,5 @@ TODOS
 
 - autocomplete
 - greadlink readlink -f check
-- ad hoc action scripts
-- TODO: single bootstrap file
+- TODO: single bootstrap file / ./gluew wrapper
+TODO: check to ensre name and 'using' are properties
