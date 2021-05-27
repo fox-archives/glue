@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 
 bootstrap() {
-	set -Eo pipefail
+	set -eEo pipefail
 
 	trap 'bootstrap.int' INT
 	bootstrap.int() {

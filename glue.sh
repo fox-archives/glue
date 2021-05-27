@@ -2,7 +2,7 @@
 set -Eo pipefail
 
 # shellcheck disable=SC2034
-declare PROGRAM_VERSION="0.5.0"
+declare PROGRAM_VERSION="0.7.0"
 
 # source code directory
 GLUE_ROOT_DIR="$(readlink -f "${BASH_SOURCE[0]}")" || die 'Irrecoverable failure'
