@@ -20,6 +20,12 @@ main() {
 		die 'Working tree still dirty. Please commit all changes before making a release'
 	fi
 
+	# Ensure we can push changes without --force-lease
+	if ! git merge-base --is-ancestor origin/main main; then
+		# main NOT is the same or has new additional commits on top of origin/main"
+		die "Detected that your 'main' branch and it's remote have diverged. Won't merge start release process until histories are shared"
+	fi
+
 	# Get current version
 	toml.get_key version glue-auto.toml
 	local currentVersion="$REPLY"

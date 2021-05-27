@@ -2,13 +2,8 @@
 eval "$GLUE_BOOTSTRAP"
 bootstrap || exit
 
-ensure.cmd 'shdoc'
-
-util.shopt -s dotglob
-util.shopt -s nullglob
-
-for file in **/*{.sh,bash}; do
-	:
-done
+# glue useAction(tool-shdoc.sh)
+util.get_action 'tool-shdoc.sh'
+source "$REPLY"
 
 unbootstrap

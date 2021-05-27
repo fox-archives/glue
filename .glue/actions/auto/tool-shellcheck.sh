@@ -4,9 +4,16 @@ bootstrap || exit
 
 ensure.cmd 'shellcheck'
 
-util.shopt -s dotglob
+# https://github.com/koalaman/shellcheck/issues/143
+# find . -ignore_readdir_race -regex '.*\.\(sh\|ksh\|bash\)' -print0 \
+# 	| xargs -r0 \
+# 	shellcheck --check-sourced --
+
+
+util.shopt -u dotglob
+util.shopt -s globstar
 util.shopt -s nullglob
 
-shellcheck --check-sourced -- ./**/*.{sh,bash}
+shellcheck --check-sourced -- ./**/*.{sh,ksh,bash}
 
 unbootstrap
