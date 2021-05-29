@@ -28,7 +28,7 @@ main() {
 	# ----------------- Local Init (glue.sh) ----------------- #
 	local glueFile="$GLUE_WD/glue.toml"
 	# TODO: fix hack
-	readonly -a GLUE_USING=("$(grep using "$glueFile" | sed 's|using="\(.*\)"|\1|g')")
+	readonly -a GLUE_USING=("$(grep using "$glueFile" | sed 's|using[ \t]*=[ \t]*"\(.*\)"|\1|g')")
 	unset -v glueFile
 
 	# ------------------------- Main ------------------------- #
