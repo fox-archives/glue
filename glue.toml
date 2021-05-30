@@ -1,2 +1,6 @@
-name="Glue"
 using="Bash"
+
+name = "Edwin Kofler"
+email = "edwin@kofler.dev"
+project = "glue"
+desc = "Hypergeneral boilerplate manager and task runner for projects"

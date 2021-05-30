@@ -7,6 +7,7 @@ bootstrap || exit
 # - Ensure a dirty Git working tree
 # - Add bumped files to commit with version number
 # - Make GitHub release
+
 unset main
 main() {
 	local -r dryStatus="$1"
@@ -18,16 +19,16 @@ main() {
 	ensure.nonZero 'newVersion' "$newVersion"
 
 	isDry() {
-		# must be set to 'notDry' to not be dry.
-		# Defaults to 'not dry'
-		[ "$dryStatus" != "notDry" ]
+		# must be set to 'wet' to not be dry, which so
+		# that it defaults to 'dry' on empty
+		[ "$RELEASE_STATUS" != 'wet' ]
 	}
 
 	if isDry; then
-		log.info "Running release process in dry mode"
+		log.info "Running post-release process in dry mode"
 	fi
 
-	# Ensure working tree is dirty
+	# Ensure working tree is dirty (we version incremented particular files)
 	if [ -z "$(git status --porcelain)" ]; then
 		if isDry; then
 			local cmd="log.warn"
@@ -64,4 +65,6 @@ main() {
 }
 
 main "$@"
+unset main
+
 unbootstrap

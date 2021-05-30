@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+
+unset main
 main() {
 	# If the working tree is dirty and there are unstaged changes
 	# for both tracked and untracked files
@@ -21,3 +23,4 @@ main() {
 }
 
 main "$@"
+unset main

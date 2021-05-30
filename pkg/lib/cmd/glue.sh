@@ -1,21 +1,18 @@
 #!/usr/bin/env bash
 set -Eo pipefail
 
-# shellcheck disable=SC2034
-declare PROGRAM_VERSION="0.7.0"
+source "$GLUE_LIB_DIR/util/util.sh" || { echo "Error: Could not source file"; exit 1; }
+source "$GLUE_LIB_DIR/util/get.sh" || util.source_error
+source "$GLUE_LIB_DIR/util/init.sh" || util.source_error
+source "$GLUE_LIB_DIR/util/log.sh" || util.source_error
+source "$GLUE_LIB_DIR/do.sh" || util.source_error
+source "$GLUE_LIB_DIR/helper.sh" || util.source_error
 
-# source code directory
-GLUE_ROOT_DIR="$(readlink -f "${BASH_SOURCE[0]}")" || die 'Irrecoverable failure'
-GLUE_ROOT_DIR="${GLUE_ROOT_DIR%/*}"
-source "$GLUE_ROOT_DIR/lib/util/util.sh" || { echo "Error: Could not source file"; exit 1; }
-source "$GLUE_ROOT_DIR/lib/util/get.sh" || util.source_error
-source "$GLUE_ROOT_DIR/lib/util/init.sh" || util.source_error
-source "$GLUE_ROOT_DIR/lib/util/log.sh" || util.source_error
-source "$GLUE_ROOT_DIR/lib/do.sh" || util.source_error
-source "$GLUE_ROOT_DIR/lib/helper.sh" || util.source_error
+# shellcheck disable=SC2034
+declare PROGRAM_VERSION="0.7.0+bdc337f-DIRTY"
 
 set.wd
-GLUE_WD="$PWD"
+declare GLUE_WD="$PWD"
 
 main() {
 	# ----------------- Global Init (init.sh) ---------------- #
@@ -32,12 +29,12 @@ main() {
 	unset -v glueFile
 
 	# ------------------------- Main ------------------------- #
-	# TODO: fix hack
-	source "$(basher package-path eankeen/args)/bin/args-init"
-	args.parse "$@" <<-"EOF"
+	# TODO sorry about this, will fix soon
+	# HACK HACK TODO PRIORITY
+	source ~/repos/bash-args/pkg/bin/args.parse  "$@" <<-"EOF"
 	@flag [help.h] - Show help
 	@flag [version.v] - Show version
-	@arg sync - Sync changes from the Glue store to the current project. This overrides and replacles the content in 'auto' directories
+	@arg sync - Sync changes from the Glue store to the current project. This overrides and replaces the content in 'auto' directories
 	@arg list - Lists all projectTypes of the current project
 	@arg print - Prints the script about to be executed
 	@arg act - Executes an action
