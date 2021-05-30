@@ -11,10 +11,25 @@ action.log() {
 	local currentAction="${BASH_SOURCE[2]}"
 	local currentActionDirname="${currentAction%/*}"
 
-	# TODO: improve output
+	shopt -q extglob
+	local extGlobExitStatus=$?
+	shopt -s extglob
+
 	if [ "${currentActionDirname##*/}" = auto ]; then
-		echo ":: :: RUNNING ACTION -> auto/${currentAction##*/}"
+		if [[ "${LANG,,?}" == *utf?(-)8 ]]; then
+			echo "■■■■ 🢂  RUNNING ACTION -> auto/${currentAction##*/}"
+		else
+			echo ":::: => RUNNING ACTION -> auto/${currentAction##*/}"
+		fi
 	else
-		echo ":: :: RUNNING ACTION -> ${currentAction##*/}"
+		if [[ "${LANG,,?}" == *utf?(-)8 ]]; then
+			echo "■■■■ 🢂  RUNNING ACTION -> ${currentAction##*/}"
+		else
+			echo ":::: => RUNNING ACTION -> ${currentAction##*/}"
+		fi
+
 	fi
+
+	(( extGlobExitStatus != 0 )) && shopt -u extglob
+
 }
