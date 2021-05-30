@@ -9,7 +9,7 @@ source "$GLUE_LIB_DIR/do.sh" || util.source_error
 source "$GLUE_LIB_DIR/helper.sh" || util.source_error
 
 # shellcheck disable=SC2034
-declare PROGRAM_VERSION="0.7.0+ad7f095-DIRTY"
+declare PROGRAM_VERSION="0.7.0+ad7f095-DIRTY+7f15e9f"
 
 set.wd
 declare GLUE_WD="$PWD"

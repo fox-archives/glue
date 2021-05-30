@@ -2,13 +2,11 @@
 eval "$GLUE_BOOTSTRAP"
 bootstrap || exit
 
-# TODO: merge with Bash.release and add --dry
-
 # shellcheck disable=SC2034
 readonly RELEASE_STATUS='dry'
 
-util.get_command 'Bash.build.sh'
-source "$REPLY"
+# util.get_command 'Bash.release.sh'
+# source "$REPLY"
 
 # glue useAction(util-release-pre.sh)
 util.get_action 'util-release-pre.sh'

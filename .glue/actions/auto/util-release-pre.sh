@@ -54,8 +54,9 @@ main() {
 	# prompt user for new version
 	local newVersion=
 	if isDry; then
-		toml.get_key version glue-auto.toml
-		newVersion="$REPLY"
+		util.get_action 'util-get-version.sh'
+		source "$REPLY"
+		declare newVersion="$REPLY"
 	else
 		# Get current version
 		toml.get_key version glue-auto.toml

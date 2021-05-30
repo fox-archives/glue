@@ -20,11 +20,12 @@ source "$REPLY" "$newVersion"
 
 # glue useAction(util-release-post.sh)
 util.get_action 'util-release-post.sh'
-source "$REPLY" 'notDry' "$newVersion"
+source "$REPLY" 'dry' "$newVersion"
 
 # glue useAction(result-pacman-package.sh)
 util.get_action 'result-pacman-package.sh'
 source "$REPLY"
 
 unset newVersion
+
 unbootstrap
