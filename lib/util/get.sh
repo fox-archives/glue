@@ -14,7 +14,7 @@ get.wd() {
 	done
 
 	if [[ $PWD == / ]]; then
-		die 'No glue config file found in current or parent paths'
+		die "No glue config file 'glue.toml' found in current or parent paths"
 	fi
 
 	printf "%s" "$PWD"
@@ -28,7 +28,7 @@ set.wd() {
 	done
 
 	if [[ $PWD == / ]]; then
-		die 'No glue config file found in current or parent paths'
+		die "No glue config file 'glue.toml' found in current or parent paths"
 	fi
 }
 

@@ -58,3 +58,4 @@ TODOS
 - greadlink readlink -f check
 - TODO: single bootstrap file / ./gluew wrapper
 TODO: check to ensre name and 'using' are properties
+- TODO: ensure `args.parse` is a prerequisite

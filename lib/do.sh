@@ -9,11 +9,15 @@ doSync() {
 		| xargs -r0 -- rm -rf
 
 	# ------------------------- Copy ------------------------- #
+	# ROOT
+	log.info "Copying all files from '\$GLUE_STORE/root' to '.'"
+	find "$GLUE_STORE/root/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -print0 \
+		| xargs -r0I '{}' -- cp '{}' "$GLUE_WD/.glue/"
+
 	# COMMON
 	log.info "Copying all files and dirs from '\$GLUE_STORE/common/' to 'common/'"
-	local dir="common"
-	find "$GLUE_STORE/$dir/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -print0 \
-		| xargs -r0I '{}' -- cp -r '{}' "$GLUE_WD/.glue/$dir/auto/"
+	find "$GLUE_STORE/common/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -print0 \
+		| xargs -r0I '{}' -- cp -r '{}' "$GLUE_WD/.glue/common/auto/"
 
 	# COMMANDS
 	log.info "Copying all files and dirs from '\$GLUE_STORE/commands' to 'commands/'"
@@ -30,7 +34,7 @@ doSync() {
 	# ACTIONS, CONFIGS
 	# <directoryToSearchAnnotations:annotationName:directoryToSearchForFile>
 	local arg
-	for arg in 'commands:useAction:actions' 'actions:useConfig:configs'; do
+	for arg in 'commands:useAction:actions' 'actions:useAction:actions' 'actions:useConfig:configs'; do
 		local searchDir="${arg%%:*}"
 		local annotationName="${arg#*:}"; annotationName="${annotationName%:*}"
 		local fileDir="${arg##*:}"
@@ -116,18 +120,19 @@ doPrint() {
 
 # TODO: pass option whether to explicitly use 'auto' or non-auto file
 doAct() {
-	[[ -z $1 ]] && die 'No action file passed'
+	local actionFile="${argsCommands[1]}"
 
+	[[ -z $actionFile ]] && die 'No action file passed'
 	# -------------- Store Init (*.boostrap.sh) -------------- #
 	helper.get_executable_file "$GLUE_STORE/bootstrap"
 	local bootstrapFile="$REPLY"
 	GLUE_BOOTSTRAP=$(<"$bootstrapFile") || die "Could not get contents of bootstrap file '$bootstrapFile'"
 
 
-	helper.get_executable_file "$GLUE_WD/.glue/actions/$1"
+	helper.get_executable_file "$GLUE_WD/.glue/actions/$actionFile"
 	local overrideFile="$REPLY"
 
-	helper.get_executable_file "$GLUE_WD/.glue/actions/auto/$1"
+	helper.get_executable_file "$GLUE_WD/.glue/actions/auto/$actionFile"
 	local autoFile="$REPLY"
 
 	hasRan=no
@@ -140,14 +145,15 @@ doAct() {
 	fi
 
 	if [[ $hasRan == no ]]; then
-		log.error "Action file '$1' did match any files"
+		log.error "Action file '$actionFile' did match any files"
 		echo "    -> Is the task contained in '.glue/actions/auto' or '.glue/actions'?" >&2
 		exit 1
 	fi
 }
 
 doCmd() {
-	[[ -z ${argsCommands[1]} ]] && die 'No meta task passed'
+	local metaTask="${argsCommands[1]}"
+	[[ -z $metaTask ]] && die 'No meta task passed'
 
 	# -------------- Store Init (*.boostrap.sh) -------------- #
 	helper.get_executable_file "$GLUE_STORE/bootstrap"
@@ -155,13 +161,13 @@ doCmd() {
 	GLUE_BOOTSTRAP=$(<"$bootstrapFile") || die "Could not get contents of bootstrap file '$bootstrapFile'"
 
 	# -------------------- Parse Meta task ------------------- #
-	get.task "${argsCommands[1]}"
+	get.task "$metaTask"
 	local task="$REPLY"
 
-	get.projectType "${argsCommands[1]}"
+	get.projectType "$metaTask"
 	local projectType="$REPLY"
 
-	get.when "${argsCommands[1]}"
+	get.when "$metaTask"
 	local when="$REPLY"
 
 	# --------------------- Sanity check --------------------- #

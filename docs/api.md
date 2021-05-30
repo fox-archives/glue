@@ -2,6 +2,26 @@
 
 For executables ran in `actions` and `commands`, the following environment variables are available
 
+## `glue.toml`
+
+The `glue.toml` can be expected to have the following configuration
+
+### `name`
+
+Name of the project. This is a pretty name
+
+### `using`
+
+String or array of `projectType`s to use
+
+## `glue-auto.toml`
+
+File that contains project specific configuration data only read and updated by scripts
+
+### `version`
+
+Current [Semantic Version](https://semver.org) of the project
+
 ## Environment Variables
 
 ### `GLUE_WD`
@@ -40,9 +60,13 @@ Scripts in `common` contain functionality shared by both scripts in `commands` a
 
 Any output that your scripts may emit. Since this directory is one of the only ones (besides `state`) that is not contained in the Glue store, it should not have an `auto` subdirectory
 
-### `state`
+### `generated`
 
-Any persistent state that your scripts may emit. Use of this directory is _highly discouraged_. Just like `output`, there should not be a subdirectory of `auto`
+Any temporary or permanent files your (action) script may emit. Please namespace all of your files under the `action` script name. For example, generate under `tool-shdoc` for `actions/tool-shdoc.sh`
+
+### `root`
+
+This file is only present in the Glue store. All _files_ it contains is copied to the `.glue/` directories. Primarily, this is used to house a `.gitignore` for the `generated` subdirectory
 
 # Miscellaneous
 

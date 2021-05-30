@@ -1,0 +1,26 @@
+{
+  "name": "glue",
+  "version": "0.1.0",
+  "description": "Glue is the manifestation of a generalized task runner with respect to language agnosticity",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "lib": "lib",
+    "test": "tests"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eankeen/glue.git"
+  },
+  "keywords": [],
+  "author": "Edwin Kofler <edwin@kofler.dev> (https://edwinkofler.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/eankeen/glue/issues"
+  },
+  "homepage": "https://github.com/eankeen/glue#readme"
+}

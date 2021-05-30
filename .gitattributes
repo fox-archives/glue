@@ -1,5 +1,2 @@
 * text=auto
 .glue linguist-generated
-# TODO
-.glue-vendor linguist-vendored
-\

@@ -32,6 +32,7 @@ main() {
 	unset -v glueFile
 
 	# ------------------------- Main ------------------------- #
+	# TODO: fix hack
 	source "$(basher package-path eankeen/args)/bin/args-init"
 	args.parse "$@" <<-"EOF"
 	@flag [help.h] - Show help
