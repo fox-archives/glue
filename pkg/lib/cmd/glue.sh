@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 set -Eo pipefail
 
-source "$GLUE_LIB_DIR/util/util.sh" || { echo "Error: Could not source file"; exit 1; }
-source "$GLUE_LIB_DIR/util/get.sh" || util.source_error
-source "$GLUE_LIB_DIR/util/init.sh" || util.source_error
-source "$GLUE_LIB_DIR/util/log.sh" || util.source_error
-source "$GLUE_LIB_DIR/do.sh" || util.source_error
-source "$GLUE_LIB_DIR/helper.sh" || util.source_error
+source "$PROGRAM_LIB_DIR/util/util.sh" || { echo "Error: Could not source file"; exit 1; }
+source "$PROGRAM_LIB_DIR/util/get.sh" || util.source_error
+source "$PROGRAM_LIB_DIR/util/init.sh" || util.source_error
+source "$PROGRAM_LIB_DIR/util/log.sh" || util.source_error
+source "$PROGRAM_LIB_DIR/do.sh" || util.source_error
+source "$PROGRAM_LIB_DIR/helper.sh" || util.source_error
 
 # shellcheck disable=SC2034
-declare PROGRAM_VERSION="0.7.0+ad7f095-DIRTY+8cf3b09-DIRTY"
+declare PROGRAM_VERSION="0.7.0+ad7f095-DIRTY+8cf3b09-DIRTY+04a53f7"
 
 set.wd
 declare GLUE_WD="$PWD"

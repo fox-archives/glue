@@ -70,8 +70,8 @@ realpath.absolute() {
 # distribution's package manager, the 'lib' files are in an extra subfolder
 # compared to an installation through Git (ex. Basher)
 realpath.location "${BASH_SOURCE[0]}"
-if [ -d "$REPLY"/../lib/SED_PACKAGE_DIR ]; then
-	PROGRAM_LIB_DIR="$REPLY/../lib/SED_PACKAGE_DIR"
+if [ -d "$REPLY"/../lib/TEMPLATE_PACKAGE_DIR ]; then
+	PROGRAM_LIB_DIR="$REPLY/../lib/TEMPLATE_PACKAGE_DIR"
 elif [ -d "$REPLY"/../lib ]; then
 	PROGRAM_LIB_DIR="$REPLY/../lib"
 else
@@ -80,10 +80,10 @@ else
 fi
 
 # shellcheck disable=SC1091
-source "$PROGRAM_LIB_DIR/cmd/SED_BIN_FILE"
+source "$PROGRAM_LIB_DIR/cmd/TEMPLATE_BIN_FILE"
 EOF
-	sed -i -e "s/SED_PACKAGE_DIR/$distroPackageName/g" "./pkg/bin/$fileName"
-	sed -i -e "s/SED_BIN_FILE/$fileName.sh/g" "./pkg/bin/$fileName"
+	sed -i -e "s/TEMPLATE_PACKAGE_DIR/$distroPackageName/g" "./pkg/bin/$fileName"
+	sed -i -e "s/TEMPLATE_BIN_FILE/$fileName.sh/g" "./pkg/bin/$fileName"
 
 	done
 }
