@@ -62,7 +62,7 @@ doSync() {
 					cp -r "$GLUE_STORE/$fileDir/$file" "$GLUE_WD/.glue/$fileDir/auto/"
 				esac
 			else
-				log.warn "Corresponding file or directory for annotation '$annotationName($file)' not found in directory '$GLUE_STORE/$fileDir'. Skipping'"
+				log.warn "Corresponding file or directory for annotation '$annotationName($file)' not found in directory '$GLUE_STORE/$fileDir'. Skipping"
 			fi
 		done
 	done
