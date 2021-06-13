@@ -12,7 +12,7 @@ store="$HOME/repos/glue-store"
 
 For every project you wish to manage with `Glue`, create a `glue.toml` at the root of the directory. It contains the project types you wish to use. These are ran in order.
 
-For example, if you specify `glue cmd build`, it will first execute `./commands/NodeJS_Server.build.sh`, then `./commands/Python.build.sh` (in addition to potentially executing many other scripts, which isn't important here for brevity's sake)
+For example, if you specify `glue cmd build`, it will first execute `./tasks/NodeJS_Server.build.sh`, then `./tasks/Python.build.sh` (in addition to potentially executing many other scripts, which isn't important here for brevity's sake)
 
 ```toml
 # TODO: make array work

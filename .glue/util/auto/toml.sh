@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# TODO: own file
+# TODO: move to own repository
 
 # @description Get a particular key of a toml file
 #

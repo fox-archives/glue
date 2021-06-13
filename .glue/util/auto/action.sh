@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-# Pretty log the currently running command
+# @description Print the currently running action
+# @noargs
+# @see task.log
 action.log() {
 	# ${BASH_SOURCE[0]}: Ex. ~/.../.glue/actions/auto/util/action.sh
 	# ${BASH_SOURCE[1]}: Ex. ~/.../.glue/actions/auto/util/bootstrap.sh
@@ -10,10 +12,6 @@ action.log() {
 	# This works on the assumption that 'source's are all absolute paths
 	local currentAction="${BASH_SOURCE[2]}"
 	local currentActionDirname="${currentAction%/*}"
-
-	shopt -q extglob
-	local extGlobExitStatus=$?
-	shopt -s extglob
 
 	if [ "${currentActionDirname##*/}" = auto ]; then
 		if [[ "${LANG,,?}" == *utf?(-)8 ]]; then
@@ -28,9 +26,5 @@ action.log() {
 			echo ":::: => START ACTION: '${currentAction##*/}'"
 		fi
 
-	fi
-
-	if (( extGlobExitStatus != 0 )); then
-		shopt -u extglob
 	fi
 }

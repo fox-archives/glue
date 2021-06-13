@@ -1,7 +1,12 @@
 # shellcheck shell=bash
 
+# @description Bootstraps a particular 'action' or 'task' file
+# @noargs
 bootstrap() {
 	set -eEo pipefail
+	shopt -s extglob
+
+	unset REPLY task action
 
 	trap 'bootstrap.int' INT
 	bootstrap.int() {
@@ -15,8 +20,8 @@ bootstrap() {
 		cd "$_original_wd"
 	}
 
-	# source files in 'common'
-	local dir="common"
+	# source files in 'util'
+	local dir="util"
 
 	shopt -q nullglob
 	local shoptExitStatus="$?"
@@ -31,6 +36,7 @@ bootstrap() {
 		filesToSource+=("$file")
 	done
 
+	# TODO: This sourcing does not need to be ran every time
 	# Add an 'auto' file if it doesn not have a name of 'bootstrap.sh',
 	# or if the name does not already exist in the filesToSource array
 	for possibleFile in "$GLUE_WD/.glue/$dir/auto"/*?.sh; do
@@ -78,15 +84,19 @@ bootstrap() {
 	actions)
 		action.log
 		;;
-	commands)
-		command.log
+	tasks)
+		task.log
 		;;
 	*)
 		die "boostrap: Directory '$dir' not supported"
 	esac
 }
 
+# @description 'Unbootstraps' a particular 'action' or 'task' file
+# @noargs
 unbootstrap() {
+	unset task action
+
 	for option in $_util_shopt_data; do
 		optionValue="${option%.*}"
 		optionName="${option#*.}"
@@ -111,19 +121,19 @@ unbootstrap() {
 
 	# Print
 	case "$dir" in
-	commands)
+	tasks)
 		if [[ "${LANG,,?}" == *utf?(-)8 ]]; then
-			echo "■■ 🢂  END COMMAND"
+			echo "■■ 🢀  END TASK"
 		else
-			echo ":: => END COMMAND"
+			echo ":: <= END TASK"
 		fi
 
 		;;
 	actions)
 		if [[ "${LANG,,?}" == *utf?(-)8 ]]; then
-			echo "■■■■ 🢂  END ACTION"
+			echo "■■■■ 🢀  END ACTION"
 		else
-			echo ":::: => END ACTION"
+			echo ":::: <= END ACTION"
 		fi
 		;;
 	*)

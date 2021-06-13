@@ -3,8 +3,8 @@
 doSync() {
 	# ------------------------- Nuke ------------------------- #
 	log.info "Nuking all files and dirs in '*/auto/'"
-	mkdir -p "$GLUE_WD"/.glue/{actions,commands,common,configs,output}/auto
-	find "$GLUE_WD"/.glue/{actions,commands,common,configs,output}/auto/ \
+	mkdir -p "$GLUE_WD"/.glue/{actions,tasks,util,configs,output}/auto
+	find "$GLUE_WD"/.glue/{actions,tasks,util,configs,output}/auto/ \
 			-ignore_readdir_race -mindepth 1 -maxdepth 1 -print0 \
 		| xargs -r0 -- rm -rf
 
@@ -14,27 +14,27 @@ doSync() {
 	find "$GLUE_STORE/root/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -print0 \
 		| xargs -r0I '{}' -- cp '{}' "$GLUE_WD/.glue/"
 
-	# COMMON
-	log.info "Copying all files and dirs from '\$GLUE_STORE/common/' to 'common/'"
-	find "$GLUE_STORE/common/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -print0 \
-		| xargs -r0I '{}' -- cp -r '{}' "$GLUE_WD/.glue/common/auto/"
+	# UTIL
+	log.info "Copying all files and dirs from '\$GLUE_STORE/util/' to 'util/'"
+	find "$GLUE_STORE/util/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -print0 \
+		| xargs -r0I '{}' -- cp -r '{}' "$GLUE_WD/.glue/util/auto/"
 
-	# COMMANDS
-	log.info "Copying all files and dirs from '\$GLUE_STORE/commands' to 'commands/'"
+	# TASKS
+	log.info "Copying all files and dirs from '\$GLUE_STORE/tasks' to 'tasks/'"
 	local projectTypeStr
 	for projectType in "${GLUE_USING[@]}"; do
 		projectTypeStr="${projectTypeStr}${projectType}\|"
 	done
 	[[ "${#GLUE_USING[@]}" -gt 0 ]] && projectTypeStr="${projectTypeStr:: -2}"
-	find "$GLUE_STORE/commands/" \
+	find "$GLUE_STORE/tasks/" \
 			-ignore_readdir_race -mindepth 1 -maxdepth 1 -type f \
 			-regextype posix-basic -regex "^.*/\($projectTypeStr\)\..*$" -print0 \
-		| xargs -r0I '{}' -- cp '{}' "$GLUE_WD/.glue/commands/auto/"
+		| xargs -r0I '{}' -- cp '{}' "$GLUE_WD/.glue/tasks/auto/"
 
 	# ACTIONS, CONFIGS
 	# <directoryToSearchAnnotations:annotationName:directoryToSearchForFile>
 	local arg
-	for arg in 'commands:useAction:actions' 'actions:useAction:actions' 'actions:useConfig:configs'; do
+	for arg in 'tasks:useAction:actions' 'actions:useAction:actions' 'actions:useConfig:configs'; do
 		local searchDir="${arg%%:*}"
 		local annotationName="${arg#*:}"; annotationName="${annotationName%:*}"
 		local fileDir="${arg##*:}"
@@ -75,7 +75,7 @@ doList() {
 	shopt -s nullglob
 
 	local filePath
-	for filePath in "$GLUE_WD"/.glue/commands/* "$GLUE_WD"/.glue/commands/auto/*; do
+	for filePath in "$GLUE_WD"/.glue/tasks/* "$GLUE_WD"/.glue/tasks/auto/*; do
 		local file="${filePath##*/}"
 		local task="${file%%.*}"
 
@@ -211,10 +211,10 @@ doCmd() {
 	local hasRan=no
 	for projectType in "${projectTypes[@]}"; do
 		for when in "${whens[@]}"; do
-			helper.get_executable_file "$GLUE_WD/.glue/commands/${projectType}.${task}${when}"
+			helper.get_executable_file "$GLUE_WD/.glue/tasks/${projectType}.${task}${when}"
 			local overrideFile="$REPLY"
 
-			helper.get_executable_file "$GLUE_WD/.glue/commands/auto/${projectType}.${task}${when}"
+			helper.get_executable_file "$GLUE_WD/.glue/tasks/auto/${projectType}.${task}${when}"
 			local autoFile="$REPLY"
 
 			if [ -f "$overrideFile" ]; then
@@ -230,7 +230,7 @@ doCmd() {
 
 	if [[ $hasRan == no ]]; then
 		log.error "Task '$task' did match any files"
-		echo "    -> Is the task contained in '.glue/commands/auto' or '.glue/commands'?" >&2
+		echo "    -> Is the task contained in '.glue/tasks/auto' or '.glue/tasks'?" >&2
 		echo "    -> Was a task like 'build', 'ci', etc. actually specified?" >&2
 		exit 1
 	fi

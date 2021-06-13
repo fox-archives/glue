@@ -1,6 +1,6 @@
 # API
 
-For executables ran in `actions` and `commands`, the following environment variables are available
+For executables ran in `actions` and `tasks`, the following environment variables are available
 
 ## `glue.toml`
 
@@ -34,27 +34,27 @@ Whether or not the currently running script has a parent folder of 'auto'. Has a
 
 ### `GLUE_BOOTSTRAP`
 
-The stage bootstrap commands to executed when a script under the 'commands' or 'actions' directory executes or is sourced. This has the contents of the `boostrap.*` file in your Glue store
+The bootstrap commands to be executed when a script under the 'tasks' or 'actions' directory is executed or sourced. This has the contents of the `boostrap.*` file in your Glue store
 
 ## Directories
 
 Certain directories have an intrinsic meaning and should be used as such. All directories are a subdirectory of `.glue` and should be tracked by your VCS
 
-### `commands`
+### `tasks`
 
 The location Glue looks to execute a particular task. Glue also scans this directory to find `useAction()` annotations
 
 ### `actions`
 
-The location a script in 'commands' looks to source to perform a more fine-grained action (ex. run `eslint`). Glue also scans this directorie to find `useConfig()` annotations
+The location a script in 'tasks' looks to source to perform a more fine-grained action (ex. run `eslint`). Glue also scans this directorie to find `useConfig()` annotations
 
 ### `configs`
 
 Where config files are stored. Glue doesn't use this file directly, but it copies its contents because your scripts will likely require configuration
 
-### `common`
+### `util`
 
-Scripts in `common` contain functionality shared by both scripts in `commands` and `actions`. Glue doesn't use this file directly, but it copies its contents nevertheless
+Scripts in `util` contain functionality shared by both scripts in `tasks` and `actions`. Glue doesn't use this file directly, but it copies its contents nevertheless
 
 ### `output`
 
@@ -70,4 +70,4 @@ This file is only present in the Glue store. All _files_ it contains is copied t
 
 # Miscellaneous
 
-- Most script-writing-gotchia's are due to the fact that the script file can reside in either `commands/auto/script.sh` or `commands/script.sh`
+- Most script-writing-gotchia's are due to the fact that the script file can reside in either `tasks/auto/script.sh` or `tasks/script.sh`

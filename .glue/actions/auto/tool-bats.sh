@@ -4,22 +4,37 @@ bootstrap || exit
 
 ensure.cmd 'bats'
 
-unset main
-main() {
+action() {
 	local -a dirs=()
-	if [ -d pkg ]; then
-		cd pkg || error.cd_failed
-		dirs=(../test ../tests)
-	else
-		dirs=(test tests)
-	fi
+	local exitCode=0
 
-	for dir in "${dirs[@]}"; do
-		[[ -d $dir ]] || continue
+	(
+		local exitCode=0
 
-		bats --recursive --output "." "$dir"
-	done
+		if [ -d pkg ]; then
+			if ! cd pkg; then
+				error.cd_failed
+			fi
+			dirs=(../test ../tests)
+		else
+			dirs=(test tests)
+		fi
+
+		for dir in "${dirs[@]}"; do
+			if [ ! -d "$dir" ]; then
+				continue
+			fi
+
+			if bats --recursive --output "." "$dir"; then : else
+				exitCode=$?
+			fi
+		done
+
+		return "$exitCode"
+	); exitCode=$?
+
+	REPLY="$exitCode"
 }
 
-main "$@"
+action "$@"
 unbootstrap

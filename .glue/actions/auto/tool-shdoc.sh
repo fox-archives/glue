@@ -2,30 +2,43 @@
 eval "$GLUE_BOOTSTRAP"
 bootstrap || exit
 
-ensure.cmd 'shdoc'
+action() {
+	ensure.cmd 'shdoc'
 
-util.shopt -s dotglob
-util.shopt -s globstar
-util.shopt -s nullglob
+	util.shopt -s dotglob
+	util.shopt -s globstar
+	util.shopt -s nullglob
 
-generated.in 'tool-shdoc'
-(
-	if [ -d pkg ]; then
-		cd pkg || error.cd_failed
-	fi
+	local exitCode=0
 
-	for file in ./**/*.{sh,bash}; do
-		if [[ $file == *'/.glue/'* ]]; then
-			continue
+	generated.in 'tool-shdoc'; (
+		if [ ! -d pkg ]; then
+			error.non_conforming "'./pkg' directory does not exist"
 		fi
 
-		declare output="$GENERATED_DIR/$file"
-		mkdir -p "${output%/*}"
-		output="${output%.*}"
-		output="$output.md"
-		shdoc < "$file" > "$output"
-	done
-) || exit
-generated.out
+		if ! cd pkg; then
+			error.cd_failed
+		fi
 
+		local exitCode=0
+
+		for file in ./**/*.{sh,bash}; do
+			local output="$GENERATED_DIR/$file"
+			mkdir -p "${output%/*}"
+			output="${output%.*}"
+			output="$output.md"
+			if shdoc < "$file" > "$output"; then : else
+				if is.wet_release; then
+					exitCode=$?
+				fi
+			fi
+		done
+
+		return "$exitCode"
+	); exitCode=$?; generated.out
+
+	REPLY="$exitCode"
+}
+
+action "$@"
 unbootstrap
