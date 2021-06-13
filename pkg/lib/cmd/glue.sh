@@ -9,7 +9,7 @@ source "$PROGRAM_LIB_DIR/do.sh" || util.source_error
 source "$PROGRAM_LIB_DIR/helper.sh" || util.source_error
 
 # shellcheck disable=SC2034
-declare PROGRAM_VERSION="0.8.0"
+declare PROGRAM_VERSION="0.8.0+c44d07c-DIRTY"
 
 set.wd
 declare GLUE_WD="$PWD"
@@ -29,9 +29,7 @@ main() {
 	unset -v glueFile
 
 	# ------------------------- Main ------------------------- #
-	# TODO sorry about this, will fix soon
-	# HACK HACK TODO PRIORITY
-	source ~/repos/bash-args/pkg/bin/args.parse  "$@" <<-"EOF"
+	source args.parse  "$@" <<-"EOF"
 	@flag [help.h] - Show help
 	@flag [version.v] - Show version
 	@arg sync - Sync changes from the Glue store to the current project. This overrides and replaces the content in 'auto' directories
@@ -69,7 +67,9 @@ main() {
 			;;
 		*)
 			log.error "Subcommand does not exist"
-			echo "$argsHelpText"
+			if [ -n "$argsHelpText" ]; then
+				echo "$argsHelpText"
+			fi
 			exit 1
 	esac
 }
