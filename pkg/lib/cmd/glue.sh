@@ -9,7 +9,7 @@ source "$PROGRAM_LIB_DIR/do.sh" || util.source_error
 source "$PROGRAM_LIB_DIR/helper.sh" || util.source_error
 
 # shellcheck disable=SC2034
-declare PROGRAM_VERSION="0.7.0+ad7f095-DIRTY+8cf3b09-DIRTY+04a53f7"
+declare PROGRAM_VERSION="0.8.0"
 
 set.wd
 declare GLUE_WD="$PWD"
