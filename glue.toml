@@ -1,4 +1,6 @@
-using="Bash"
+using = 'Bash'
+gitRepoName = 'glue'
+distroPackageName = 'glue'
 
 name = "Edwin Kofler"
 email = "edwin@kofler.dev"

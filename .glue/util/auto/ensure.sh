@@ -16,7 +16,7 @@ ensure.cmd() {
 # @description Checks a function's arguments, terminating the program
 # if some commands were not passed
 # @arg $1 string Name of function to print on error
-# @arg $2 number Total arguments to check
+# @arg $2 string Space separated list of numbers to check
 # @arg $3 array Arguments to check
 ensure.args() {
 	local fnName="$1"
@@ -27,7 +27,7 @@ ensure.args() {
 	ensure.nonZero 'argNums' "$argNums"
 
 	local argNum
-	for argNum in $(seq "$argNums"); do
+	for argNum in $argNums; do
 		if [ -z "${!argNum}" ]; then
 		# if [ -z "${@:$argNum:1}" ]; then
 			echo "Context: '$0'" >&2
