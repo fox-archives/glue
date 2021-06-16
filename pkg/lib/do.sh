@@ -4,13 +4,13 @@ doSync() {
 	# ------------------------- Nuke ------------------------- #
 	log.info "Nuking all files and dirs in '*/auto/'"
 	mkdir -p "$GLUE_WD"/.glue/{actions,tasks,util,configs,output}/auto
-	find "$GLUE_WD"/.glue/{actions,tasks,util,configs,output}/auto/ \
+	find "$GLUE_WD"/.glue/{actions,tasks,commands,common,util,configs,output}/auto/ \
 			-ignore_readdir_race -mindepth 1 -maxdepth 1 -print0 \
 		| xargs -r0 -- rm -rf
 
 	# ------------------------- Copy ------------------------- #
 	# ROOT
-	log.info "Copying all files from '\$GLUE_STORE/root' to '.'"
+	log.info "Copying all files from '\$GLUE_STORE/root' to './'"
 	find "$GLUE_STORE/root/" -ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -print0 \
 		| xargs -r0I '{}' -- cp '{}' "$GLUE_WD/.glue/"
 
