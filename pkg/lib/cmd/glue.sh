@@ -21,7 +21,7 @@ main() {
 	GLUE_STORE="${GLUE_STORE:-${REPLY:-$HOME/.glue-store}}"
 
 	util.get_config_array 'using'
-	echo v "${REPLIES[@]}"
+	# shellcheck disable=SC2034
 	IFS=' ' read -ra GLUE_USING <<< "${REPLIES[@]}"
 
 	util.get_toml_string "$GLUE_WD/glue-auto.toml" 'glueVersion'
@@ -47,10 +47,13 @@ main() {
 	fi
 
 	if [[ -v '${args[version]}' ]]; then
-		util.show_version
+		cat <<-EOF
+		Version: $PROGRAM_VERSION
+		EOF
 		exit
 	fi
 
+	# shellcheck disable=SC2154
 	case "${argsCommands[0]}" in
 		sync)
 			doSync "$@"

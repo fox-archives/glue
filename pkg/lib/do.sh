@@ -187,7 +187,6 @@ doCmd() {
 		projectTypes=("" "${GLUE_USING[@]}")
 	else
 		die "Must set the 'using' variable in the Glue project configuration (glue.toml)"
-		return
 	fi
 
 	# calculate 'when's to run

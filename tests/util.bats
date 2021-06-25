@@ -12,11 +12,11 @@ setup_file() {
 	GLUE_CONFIG_LOCAL="$PWD/../tests/mocks/glueLocal.toml"
 
 	util.get_config_string 'key1'
-	[[ "$REPLY" == 'mar' ]]
+	[ "$REPLY" = 'mar' ]
 
 	util.get_config_string 'key2'
-	[[ "$REPLY" == 'bar' ]]
+	[ "$REPLY" = 'bar' ]
 
 	util.get_config_string 'key3'
-	[[ "$REPLY" == 'far' ]]
+	[ "$REPLY" = 'far' ]
 }

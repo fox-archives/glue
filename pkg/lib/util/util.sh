@@ -15,44 +15,6 @@ util.source_error() {
 	exit 1
 }
 
-# @description Prints the help menu
-util.show_help() {
-	cat <<-EOF
-	glue [flags] <command>
-
-	Commands:
-	    sync
-	        Sync changes from the Glue store to the current project.
-	        This overrides and replaces the content in 'auto' directories
-
-	    list
-	        Lists all projectTypes of the current project
-
-	    print
-	        Prints the script about to be executed
-
-	    act <actionFile>
-	        Execute an action
-
-	    cmd <metaTask>
-	        Execute a meta task (command)
-
-	Flags:
-	    --help
-	        Show help menu
-
-	    --version
-	        Show current version
-	EOF
-}
-
-# @description Prints the current version
-util.show_version() {
-	cat <<-EOF
-	Version: $PROGRAM_VERSION
-	EOF
-}
-
 # @description Retrieve a string key from a toml file
 util.get_toml_string() {
 	REPLY=
