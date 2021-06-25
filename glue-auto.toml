@@ -1,2 +1,3 @@
-version = "0.8.0+c44d07c-DIRTY"
-glueVersion = '2414a21744785efafa2b97bc4137511671f13698'
+glueVersion = '50fdc8f5f934f6a0a35c586397a1f172eaeb2906'
+
+programVersion = "0.8.0+50fdc8f-DIRTY"

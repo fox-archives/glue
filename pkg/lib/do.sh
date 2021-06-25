@@ -3,7 +3,8 @@
 doSync() {
 	# ------------------------- Nuke ------------------------- #
 	log.info "Nuking all files and dirs in '*/auto/'"
-	mkdir -p "$GLUE_WD"/.glue/{actions,tasks,util,configs,output}/auto
+	mkdir -p "$GLUE_WD"/.glue/{output,generated}
+	mkdir -p "$GLUE_WD"/.glue/{actions,tasks,util,configs}/auto
 	find "$GLUE_WD"/.glue/{actions,tasks,commands,common,util,configs,output}/auto/ \
 			-ignore_readdir_race -mindepth 1 -maxdepth 1 -print0 2>/dev/null \
 		| xargs -r0 -- rm -rf
@@ -175,7 +176,7 @@ doCmd() {
 		die "Specifying a 'task is required"
 	fi
 
-	if [[ -v DEBUG ]]; then
+	if [[ -v DEBUG_GLUE ]]; then
 		echo "task: $task"
 		echo "projectType: $projectType"
 		echo "when: $when"

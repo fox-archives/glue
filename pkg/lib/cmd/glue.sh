@@ -10,10 +10,10 @@ source "$PROGRAM_LIB_DIR/do.sh" || util.source_error
 source "$PROGRAM_LIB_DIR/helper.sh" || util.source_error
 
 # shellcheck disable=SC2034
-declare PROGRAM_VERSION="0.8.0+c44d07c-DIRTY"
+declare PROGRAM_VERSION="0.8.0+50fdc8f-DIRTY"
 
+# Set the working directory for this shell
 set.wd
-# shellcheck disable=SC2034
 declare GLUE_WD="$PWD"
 
 main() {

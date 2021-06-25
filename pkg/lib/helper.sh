@@ -9,7 +9,7 @@ helper.get_executable_file() {
 	local file="$1"
 	REPLY=
 
-	if [[ -v DEBUG ]] && { :>&3; } 2>/dev/null; then
+	if [[ -v DEBUG_GLUE ]] && { :>&3; } 2>/dev/null; then
 		echo "Debug: helper.get_executable_file: $file" >&3
 	fi
 
