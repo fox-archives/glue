@@ -21,9 +21,10 @@ main() {
 	GLUE_STORE="${GLUE_STORE:-${REPLY:-$HOME/.glue-store}}"
 
 	util.get_config_array 'using'
+	echo v "${REPLIES[@]}"
 	IFS=' ' read -ra GLUE_USING <<< "${REPLIES[@]}"
 
-	util.get_config_string 'glueVersion'
+	util.get_toml_string "$GLUE_WD/glue-auto.toml" 'glueVersion'
 	if [ "$REPLY" != 'latest' ]; then
 		die "Glue requires a 'glueVersion' key set to 'latest'. Specific versions are not supported yet"
 	fi

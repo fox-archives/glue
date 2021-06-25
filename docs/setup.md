@@ -6,7 +6,7 @@ Both Global and Local configuration have the same file format. Put something in 
 
 It is recommended to create a file at `~/.config/glue/glue.toml` (`GLUE_CONFIG_USER`), containing the location of your Glue store. The `~`, along with `$XDG_CONFIG_HOME` and `$XDG_DATA_HOME` values are interpolated to their environment variable equivalents
 
-```bash
+```toml
 storeDir = "~/repos/glue-store"
 ```
 

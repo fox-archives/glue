@@ -7,16 +7,16 @@ setup_file() {
 	unset GLUE_CONFIG_LOCAL
 }
 
-@test util.get_config_key {
-	GLUE_CONFIG_USER="$PWD/../tests/glueUser.toml"
-	GLUE_CONFIG_LOCAL="$PWD/../tests/glueLocal.toml"
+@test util.get_config_string {
+	GLUE_CONFIG_USER="$PWD/../tests/mocks/glueUser.toml"
+	GLUE_CONFIG_LOCAL="$PWD/../tests/mocks/glueLocal.toml"
 
-	toml.get_config_key 'key1'
+	util.get_config_string 'key1'
 	[[ "$REPLY" == 'mar' ]]
 
-	toml.get_config_key 'key2'
+	util.get_config_string 'key2'
 	[[ "$REPLY" == 'bar' ]]
 
-	toml.get_config_key 'key3'
+	util.get_config_string 'key3'
 	[[ "$REPLY" == 'far' ]]
 }

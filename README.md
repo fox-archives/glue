@@ -59,3 +59,4 @@ TODOS
 - TODO: single bootstrap file / ./gluew wrapper
 TODO: check to ensre name and 'using' are properties
 - TODO: ensure `args.parse` is a prerequisite
+- ensure 'return' is placed after all 'die's, etc.
