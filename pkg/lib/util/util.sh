@@ -49,6 +49,6 @@ util.show_help() {
 # @description Prints the current version
 util.show_version() {
 	cat <<-EOF
-	0.3
+	Version: $PROGRAM_VERSION
 	EOF
 }
