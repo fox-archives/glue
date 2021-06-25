@@ -47,4 +47,12 @@ This file is for data that you shouldn't have to manage. This includes version i
 
 ### `glueVersion`
 
-The specified version of Glue. When this is specified, it will checkout the repository at hash that is set before running any commands
+The specified version of Glue. When this is specified, and the current version does not match, it will ensure Glue is cloned to `"${XDG_DATA_HOME:-$HOME/.local/share}/glue/repository"`, switch to the correct version, and execute with the same arguments. Valid versions include the full shasum of a Git commit, or a Git tag that represents a release
+
+### Example
+
+```toml
+glueVersion = 'v0.9.0'
+# or
+glueVersion = '2414a21744785efafa2b97bc4137511671f13699'
+```
