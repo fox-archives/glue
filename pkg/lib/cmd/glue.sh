@@ -31,6 +31,7 @@ main() {
 
 
 	# ------------------------- Main ------------------------- #
+	declare -A args=()
 	source args.parse "$@" <<-"EOF"
 	@flag [help.h] - Show help
 	@flag [version.v] - Show version
@@ -41,12 +42,12 @@ main() {
 	@arg cmd - Execute a meta task (command)
 	EOF
 
-	if [[ -v '${args[help]}' ]]; then
+	if [[ "${args[help]}" = yes ]]; then
 		echo "$argsHelpText"
 		exit
 	fi
 
-	if [[ -v '${args[version]}' ]]; then
+	if [[ "${args[version]}" = yes ]]; then
 		cat <<-EOF
 		Version: $PROGRAM_VERSION
 		EOF
