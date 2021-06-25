@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -Eo pipefail
+shopt -s extglob
 
 source "$PROGRAM_LIB_DIR/util/util.sh" || { echo "Error: Could not source file"; exit 1; }
 source "$PROGRAM_LIB_DIR/util/get.sh" || util.source_error
@@ -12,24 +13,24 @@ source "$PROGRAM_LIB_DIR/helper.sh" || util.source_error
 declare PROGRAM_VERSION="0.8.0+c44d07c-DIRTY"
 
 set.wd
+# shellcheck disable=SC2034
 declare GLUE_WD="$PWD"
 
 main() {
-	# ----------------- Global Init (init.sh) ---------------- #
-	local initFile="${GLUE_INIT_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/glue/init.sh}"
-	[[ -f $initFile ]] && source "$initFile" # exposes: store
+	util.get_config_string 'storeDir'
+	GLUE_STORE="${GLUE_STORE:-${REPLY:-$HOME/.glue-store}}"
 
-	GLUE_STORE="${GLUE_STORE:-${store:-$HOME/.glue-store}}"
-	unset -v initFile store
+	util.get_config_array 'using'
+	IFS=' ' read -ra GLUE_USING <<< "${REPLIES[@]}"
 
-	# ----------------- Local Init (glue.sh) ----------------- #
-	local glueFile="$GLUE_WD/glue.toml"
-	# TODO: fix hack
-	readonly -a GLUE_USING=("$(grep using "$glueFile" | sed "s|using[ \t]*=[ \t]*[\"']\(.*\)[\"']|\1|g")")
-	unset -v glueFile
+	util.get_config_string 'glueVersion'
+	if [ "$REPLY" != 'latest' ]; then
+		die "Glue requires a 'glueVersion' key set to 'latest'. Specific versions are not supported yet"
+	fi
+
 
 	# ------------------------- Main ------------------------- #
-	source args.parse  "$@" <<-"EOF"
+	source args.parse "$@" <<-"EOF"
 	@flag [help.h] - Show help
 	@flag [version.v] - Show version
 	@arg sync - Sync changes from the Glue store to the current project. This overrides and replaces the content in 'auto' directories
@@ -66,7 +67,7 @@ main() {
 			doCmd "$@"
 			;;
 		*)
-			log.error "Subcommand does not exist"
+			log.error "Subcommand '${argsCommands[0]}' does not exist"
 			if [ -n "$argsHelpText" ]; then
 				echo "$argsHelpText"
 			fi

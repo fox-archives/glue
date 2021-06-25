@@ -1,7 +1,8 @@
-using = 'Bash'
+using = ['Bash', 'Other']
 gitRepoName = 'glue'
 distroPackageName = 'glue'
 
+glueVersion = 'latest'
 name = "Edwin Kofler"
 email = "edwin@kofler.dev"
 project = "glue"

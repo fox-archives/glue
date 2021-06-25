@@ -1,11 +1,13 @@
 # Setup
 
-## Global Configuration
+Both Global and Local configuration have the same file format. Put something in the Global configuration only where it doesn't make sense to put in the local one.
 
-It is recommended to create a file at `~/.config/glue/init.sh`, containing the location of your Glue store.
+## User Configuration
+
+It is recommended to create a file at `~/.config/glue/glue.toml` (`GLUE_CONFIG_USER`), containing the location of your Glue store. The `~`, along with `$XDG_CONFIG_HOME` and `$XDG_DATA_HOME` values are interpolated to their environment variable equivalents
 
 ```bash
-store="$HOME/repos/glue-store"
+storeDir = "~/repos/glue-store"
 ```
 
 ## Local Configuration
@@ -18,15 +20,3 @@ For example, if you specify `glue cmd build`, it will first execute `./tasks/Nod
 # TODO: make array work
 using=["NodeJS_Server", "Python"]
 ```
-
-## Environment Variables
-
-Use these to change the characteristics of how Glue operates
-
-### `GLUE_INIT_FILE`
-
-The location of the global glue configuration file. By default it's at `~/.config/glue/init.sh`
-
-### `GLUE_STORE`
-
-The location of your Glue store. This should be set in your Global configuration `init.sh` file, but you can override it. If no store is specified, the default is `~/.glue-store`
