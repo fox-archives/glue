@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 eval "$GLUE_BOOTSTRAP"
-bootstrap || exit
+bootstrap
 
 action() {
 	local version="$1"
@@ -19,7 +19,6 @@ action() {
 		log.info "Skipping GitHub artifact upload"
 	fi
 }
-
 
 action "$@"
 unbootstrap

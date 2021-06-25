@@ -5,4 +5,5 @@ distroPackageName = 'glue'
 name = "Edwin Kofler"
 email = "edwin@kofler.dev"
 project = "glue"
-desc = "Hypergeneral boilerplate manager and task runner for projects"
+description = "Hypergeneral boilerplate manager and task runner for projects"
+license = 'Apache-2.0'

@@ -1,20 +1,18 @@
 #!/usr/bin/env bash
 eval "$GLUE_BOOTSTRAP"
-bootstrap || exit
-
-ensure.cmd 'bats'
+bootstrap
 
 action() {
 	local -a dirs=()
 	local exitCode=0
 
+	ensure.cmd 'bats'
 	(
 		local exitCode=0
 
 		if [ -d pkg ]; then
-			if ! cd pkg; then
-				error.cd_failed
-			fi
+			ensure.cd 'pkg'
+
 			dirs=(../test ../tests)
 		else
 			dirs=(test tests)

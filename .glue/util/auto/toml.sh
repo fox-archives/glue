@@ -7,10 +7,17 @@
 # @arg $1 value of key to store in $REPLY
 # @arg $2 file to parse
 toml.get_key() {
+	local fn='toml.get_key'
+	bootstrap.fn "$fn"
+
 	local theirKey="$1"
 	local file="$2"
 
-	REPLY=
+	ensure.nonZero 'theirKey' "$theirKey"
+	ensure.nonZero 'file' "$file"
+
+	ensure.file "$file"
+
 	while IFS= read -r line; do
 		if [ "${line::1}" = '#' ]; then
 			continue
@@ -44,4 +51,6 @@ toml.get_key() {
 		fi
 
 	done < "$file"
+
+	unbootstrap.fn
 }

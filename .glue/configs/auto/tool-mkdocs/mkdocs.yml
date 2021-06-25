@@ -1,5 +1,6 @@
 site_name: Glue
-site_url: null
+# TODO: fix
+site_url: https://github.com/eankeen/glue
 repo_url: https://github.com/eankeen/glue
 repo_name: eankeen/glue
 site_description: Glue is the manifestation of a generalized task runner with respect to language agnosticity

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 eval "$GLUE_BOOTSTRAP"
-bootstrap || exit
+bootstrap
 
 action() {
 	ensure.cmd 'shdoc'
@@ -11,31 +11,33 @@ action() {
 
 	local exitCode=0
 
-	generated.in 'tool-shdoc'; (
-		if [ ! -d pkg ]; then
-			error.non_conforming "'./pkg' directory does not exist"
-		fi
-
-		if ! cd pkg; then
-			error.cd_failed
-		fi
+	bootstrap.generated 'tool-shdoc'; (
+		ensure.cd 'pkg'
 
 		local exitCode=0
 
 		for file in ./**/*.{sh,bash}; do
-			local output="$GENERATED_DIR/$file"
-			mkdir -p "${output%/*}"
-			output="${output%.*}"
-			output="$output.md"
-			if shdoc < "$file" > "$output"; then : else
+			local outputFile="$GENERATED_DIR/$file"
+			mkdir -p "${outputFile%/*}"
+			outputFile="${outputFile%.*}"
+			outputFile="$outputFile.md"
+			if shdoc < "$file" > "$outputFile"; then : else
+				# TODO: set exitCode on all
 				if is.wet_release; then
 					exitCode=$?
 				fi
 			fi
+
+			if [ "$(stat -c "%s" "$outputFile")" -le 5 ]; then
+				rm "$outputFile"
+				rmdir -p --ignore-fail-on-non-empty "$GENERATED_DIR"
+			fi
+
+			mkdir -p "$GENERATED_DIR"
 		done
 
 		return "$exitCode"
-	); exitCode=$?; generated.out
+	); exitCode=$?; unbootstrap.generated
 
 	REPLY="$exitCode"
 }

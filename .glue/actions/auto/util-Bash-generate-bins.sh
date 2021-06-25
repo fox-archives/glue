@@ -1,6 +1,6 @@
-# shellcheck shell=bash
+#!/usr/bin/env bash
 eval "$GLUE_BOOTSTRAP"
-bootstrap || exit
+bootstrap
 
 action() {
 	toml.get_key 'distroPackageName' glue.toml
@@ -70,10 +70,12 @@ realpath.absolute() {
 # distribution's package manager, the 'lib' files are in an extra subfolder
 # compared to an installation through Git (ex. Basher)
 realpath.location "${BASH_SOURCE[0]}"
-if [ -d "$REPLY"/../lib/TEMPLATE_PACKAGE_DIR ]; then
-	PROGRAM_LIB_DIR="$REPLY/../lib/TEMPLATE_PACKAGE_DIR"
-elif [ -d "$REPLY"/../lib ]; then
-	PROGRAM_LIB_DIR="$REPLY/../lib"
+REPLY="${REPLY/%\/}"
+REPLY="${REPLY%/*}"
+if [ -d "$REPLY/lib/TEMPLATE_PACKAGE_DIR" ]; then
+	PROGRAM_LIB_DIR="$REPLY/lib/TEMPLATE_PACKAGE_DIR"
+elif [ -d "$REPLY/lib" ]; then
+	PROGRAM_LIB_DIR="$REPLY/lib"
 else
 	echo "Error: Could not determine \$PROGRAM_LIB_DIR"
 	exit 1

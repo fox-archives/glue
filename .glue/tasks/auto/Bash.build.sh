@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 eval "$GLUE_BOOTSTRAP"
-bootstrap || exit
+bootstrap
 
 task() {
 	util.extract_version_string
 	local version="$REPLY"
 
-	custom.bump_version_hook() {
+	hook.util.update_version_strings.bump_version() {
 		local version="$1"
 
 		# glue useAction(util-Bash-version-bump.sh)

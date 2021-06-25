@@ -4,6 +4,9 @@
 # the program if it cannot be found
 # @arg string Command to check in the PATH
 ensure.cmd() {
+	local fn='ensure.cmd'
+	bootstrap.fn "$fn"
+
 	local cmd="$1"
 
 	ensure.nonZero 'cmd' "$cmd"
@@ -11,6 +14,8 @@ ensure.cmd() {
 	if ! command -v "$cmd" &>/dev/null; then
 		die "Command '$cmd' not found"
 	fi
+
+	unbootstrap.fn
 }
 
 # @description Checks a function's arguments, terminating the program
@@ -19,6 +24,9 @@ ensure.cmd() {
 # @arg $2 string Space separated list of numbers to check
 # @arg $3 array Arguments to check
 ensure.args() {
+	local fn='ensure.args'
+	bootstrap.fn "$fn"
+
 	local fnName="$1"
 	local argNums="$2"
 	shift; shift;
@@ -36,6 +44,8 @@ ensure.args() {
 			exit 1
 		fi
 	done
+
+	unbootstrap.fn
 }
 
 # @description Ensures a particular argument is not empty,
@@ -43,6 +53,9 @@ ensure.args() {
 # @arg $1 string Name of the variable
 # @arg $2 string Value of the variable
 ensure.nonZero() {
+	local fn='ensure.nonZero'
+	bootstrap.fn "$fn"
+
 	local varName="$1"
 	local varValue="$2"
 
@@ -53,12 +66,17 @@ ensure.nonZero() {
 	if [ -z "$varValue" ]; then
 		die "ensure.nonZero: Variable '$varName' must be non zero"
 	fi
+
+	unbootstrap.fn
 }
 
 # @description Ensures that a file exists. If it does not,
 # the program is terminated
 # @arg $1 string Path of the file to check. Recommend passing an absolute path
 ensure.file() {
+	local fn='ensure.file'
+	bootstrap.fn "$fn"
+
 	local fileName="$1"
 
 	ensure.nonZero 'fileName' "$fileName"
@@ -66,12 +84,17 @@ ensure.file() {
 	if [ ! -f "$fileName" ]; then
 		die "ensure.file: File '$fileName' does not exist. It *must* exist"
 	fi
+
+	unbootstrap.fn
 }
 
 # @description Ensures that a directory exists. If it does not, the
 # program is terminated
 # @arg $1 string Path of the directory to check. Recommend passing an absolute path
 ensure.dir() {
+	local fn='ensure.dir'
+	bootstrap.fn "$fn"
+
 	local dirName="$1"
 
 	ensure.nonZero 'dirName' "$dirName"
@@ -79,6 +102,8 @@ ensure.dir() {
 	if [ ! -f "$dirName" ]; then
 		die "ensure.dir: Directory '$dirName' does not exist. It *must* exist"
 	fi
+
+	unbootstrap.fn
 }
 
 # @description Ensures the Git working tree is dirty. If it is not,
@@ -86,6 +111,9 @@ ensure.dir() {
 # @noargs
 # @see ensure.git_working_tree_clean
 ensure.git_working_tree_dirty() {
+	local fn='ensure.git_working_tree_dirty'
+	bootstrap.fn "$fn"
+
 	log.ensure 'git_working_tree_clean'
 
 	if ! is.git_working_tree_dirty; then
@@ -98,6 +126,8 @@ ensure.git_working_tree_dirty() {
 
 		"$cmd" 'ensure.git_working_tree_dirty: Git working directory is clean. At this point, it *must* be dirty'
 	fi
+
+	unbootstrap.fn
 }
 
 # @description Ensures the Git working tree is clean. If it is not,
@@ -105,6 +135,9 @@ ensure.git_working_tree_dirty() {
 # @noargs
 # @see ensure.git_working_tree_clean
 ensure.git_working_tree_clean() {
+	local fn='ensure.git_working_tree_clean'
+	bootstrap.fn "$fn"
+
 	log.info 'ensure: git_working_tree_clean'
 
 	if is.git_working_tree_dirty; then
@@ -117,6 +150,8 @@ ensure.git_working_tree_clean() {
 
 		"$cmd" 'ensure.git_working_tree_clean: Git working directory is dirty. At this point, it *must* be clean'
 	fi
+
+	unbootstrap.fn
 }
 
 # @description Ensures the current local Git branch shares the same history
@@ -125,6 +160,9 @@ ensure.git_working_tree_clean() {
 # it cannot, and the release mode is 'wet', the program terminates
 # @noargs
 ensure.git_common_history() {
+	local fn='ensure.git_common_history'
+	bootstrap.fn "$fn"
+
 	log.info 'ensure: git_common_history'
 
 	local remote="${1-origin}"
@@ -143,6 +181,7 @@ ensure.git_common_history() {
 		"$cmd" "ensure.git_common_history: Detected that your 'main' branch and it's remote have diverged. At this point, both Git branch histories *must* be shared"
 	fi
 
+	unbootstrap.fn
 }
 
 # TODO: ensure there are no tags that exists that are greater than it
@@ -151,6 +190,9 @@ ensure.git_common_history() {
 # program terminates
 # @noargs
 ensure.git_version_tag_validity() {
+	local fn='ensure.git_version_tag_validity'
+	bootstrap.fn "$fn"
+
 	log.info 'ensure: git_version_tag_validity'
 
 	local version="$1"
@@ -162,12 +204,17 @@ ensure.git_version_tag_validity() {
 	if [ -n "$(git tag -l "v$version")" ]; then
 		die "ensure.git_version_tag_validity: Specified version '$version' is invalid. At this point, it *must not* be an already-existing Git tag"
 	fi
+
+	unbootstrap.fn
 }
 
 # @description Check if the current directory has a properly initialized
 # Git repository. If it does not, then the program terminates
 # @noargs
 ensure.git_repository_initialized() {
+	local fn='ensure.git_repository_initialized'
+	bootstrap.fn "$fn"
+
 	log.info 'ensure: git_repository_initialized'
 
 	if [ ! -d .git ] || [ ! -f .git/HEAD ]; then
@@ -177,6 +224,8 @@ ensure.git_repository_initialized() {
 	if ! git log -1 &>/dev/null; then
 		die 'ensure.git_repository_initialized: At least one commit must be stored in the Git repository'
 	fi
+
+	unbootstrap.fn
 }
 
 # @description Check if _only_ version changes are in the Git working tree. If
@@ -184,6 +233,9 @@ ensure.git_repository_initialized() {
 # is 'wet', then terminate the program
 # @noargs
 ensure.git_only_version_changes() {
+	local fn='ensure.git_only_version_changes'
+	bootstrap.fn "$fn"
+
 	log.info 'ensure: git_only_version_changes'
 
 	# We filter 'diff' until only changed lines remains. We then
@@ -212,6 +264,8 @@ ensure.git_only_version_changes() {
 
 		"$cmd" "ensure.git_only_version_changes: Changes other than version increments exist in the working tree. No changes *must* exist in the working tree with the exception of version increments"
 	fi
+
+	unbootstrap.fn
 }
 
 # TODO: rename to version_excludes_build_string
@@ -221,6 +275,9 @@ ensure.git_only_version_changes() {
 # identifier, terminate the program
 # @arg $1 string Versrion string to check
 ensure.version_is_only_major_minor_patch() {
+	local fn='ensure.version_is_only_major_minor_patch'
+	bootstrap.fn "$fn"
+
 	log.info 'ensure: version_is_only_major_minor_patch'
 
 	local version="$1"
@@ -230,26 +287,39 @@ ensure.version_is_only_major_minor_patch() {
 	if [[ $version == *+* ]]; then
 		die 'ensure.version_is_only_major_minor_patch: Version string contains more than just major, minor, and patch numbers'
 	fi
+
+	unbootstrap.fn
 }
 
 # @description Ensure the user really wants to perform a 'wet' release.
 # If not, then the program terminates
 # @noargs
 ensure.confirm_wet_release() {
+	local fn='ensure.confirm_wet_release'
+	bootstrap.fn "$fn"
+
 	read -rei 'Do wet release? '
 	if [[ "$REPLY" != *y* ]]; then
 		die
 	fi
+
+	unbootstrap.fn
 }
 
 # @description Ensure a particular exit code was successfull
 # If not, and release mode is 'wet', the program terminates
 # @arg $1 number Exit code
 ensure.exit_code_success() {
+	local fn='ensure.exit_code_success'
+	bootstrap.fn "$fn"
+
 	local exitCode="$1"
 
 	ensure.nonZero 'exitCode' "$exitCode"
 
+	# Note that the "$exitCode" here may not be the exact exitCode of
+	# the previous running application, since in some places,
+	# exit codes are Bitwise OR'ed together
 	if [ "$exitCode" -ne 0 ]; then
 		local cmd
 		if is.wet_release; then
@@ -260,4 +330,23 @@ ensure.exit_code_success() {
 
 		"$cmd" 'ensure.exit_code_success: A previous step did not exit successfully'
 	fi
+
+	unbootstrap.fn
+}
+
+# @description Ensure that a change directory was successfull
+# @arg $1 string Directory to change to
+ensure.cd() {
+	local fn='ensure.cd'
+	bootstrap.fn "$fn"
+
+	local dir="$1"
+
+	ensure.nonZero 'dir' "$dir"
+
+	if ! cd "$dir"; then
+		error.cd_failed
+	fi
+
+	unbootstrap.fn
 }

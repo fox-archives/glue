@@ -15,6 +15,9 @@ debug() {
 #
 # @arg $1 semver version blurb
 semver.parse() {
+	local fn='semver.parse'
+	bootstrap.fn "$fn"
+
 	declare -g major= minor= patch= preRelease= build=
 	local mode=major char=
 	while IFS= read -rn1 char; do
@@ -56,4 +59,6 @@ semver.parse() {
 			;;
 		esac
 	done <<< "$1"
+
+	unbootstrap.fn
 }
