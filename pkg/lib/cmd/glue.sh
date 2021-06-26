@@ -10,7 +10,7 @@ source "$PROGRAM_LIB_DIR/do.sh" || util.source_error
 source "$PROGRAM_LIB_DIR/helper.sh" || util.source_error
 
 # shellcheck disable=SC2034
-declare PROGRAM_VERSION="0.8.0+50fdc8f-DIRTY"
+declare PROGRAM_VERSION="0.8.0+d08d18f-DIRTY"
 
 # Set the working directory for this shell
 set.wd
@@ -62,10 +62,10 @@ main() {
 	@flag [help.h] - Show help
 	@flag [version.v] - Show version
 	@arg sync - Sync changes from the Glue store to the current project. This overrides and replaces the content in 'auto' directories
-	@arg list - Lists all projectTypes of the current project
-	@arg print - Prints the script about to be executed
-	@arg act - Executes an action
-	@arg cmd - Execute a meta task (command)
+	@arg list - Lists all tasks for each projectType
+	@arg run-task - Execute a whole task by specifying a metaTask
+	@arg run-action - Execute a particular action by specifying its name
+	@arg run-file - Execute a file as if it were an action or task. This is usually only done for testing
 	EOF
 
 	if [ "${args[help]}" = yes ]; then
@@ -91,8 +91,11 @@ main() {
 		run-action)
 			doRunAction "$@"
 			;;
-		run-command)
-			doRunCommand "$@"
+		run-task)
+			doRunTask "$@"
+			;;
+		run-file)
+			doRunFile "$@"
 			;;
 		*)
 			log.error "Subcommand '${argsCommands[0]}' does not exist"
