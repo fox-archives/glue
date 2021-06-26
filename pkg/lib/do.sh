@@ -72,9 +72,6 @@ doSync() {
 doList() {
 	local -a tasks=()
 
-	shopt -s dotglob
-	shopt -s nullglob
-
 	local filePath
 	for filePath in "$GLUE_WD"/.glue/tasks/* "$GLUE_WD"/.glue/tasks/auto/*; do
 		if [ -d "$filePath" ]; then
@@ -128,16 +125,16 @@ doList() {
 }
 
 # TODO: pass option whether to explicitly use 'auto' or non-auto file
-doAct() {
+doRunAction() {
 	local actionFile="${argsCommands[1]}"
-
 	[[ -z $actionFile ]] && die 'No action file passed'
+
 	# -------------- Store Init (*.boostrap.sh) -------------- #
 	helper.get_executable_file "$GLUE_STORE/bootstrap"
 	local bootstrapFile="$REPLY"
 	GLUE_BOOTSTRAP=$(<"$bootstrapFile") || die "Could not get contents of bootstrap file '$bootstrapFile'"
 
-
+	# Grab files to execute
 	helper.get_executable_file "$GLUE_WD/.glue/actions/$actionFile"
 	local overrideFile="$REPLY"
 
@@ -155,12 +152,13 @@ doAct() {
 
 	if [[ $hasRan == no ]]; then
 		log.error "Action file '$actionFile' did match any files"
-		echo "    -> Is the task contained in '.glue/actions/auto' or '.glue/actions'?" >&2
+		echo "    -> Is the action contained in '.glue/actions/auto' or '.glue/actions'?" >&2
+		echo "    -> Did you specify the action without the file extension?" >&2
 		exit 1
 	fi
 }
 
-doCmd() {
+doRunCommand() {
 	local metaTask="${argsCommands[1]}"
 	[[ -z $metaTask ]] && die 'No meta task passed'
 

@@ -13,10 +13,6 @@ helper.get_executable_file() {
 		echo "Debug: helper.get_executable_file: $file" >&3
 	fi
 
-	shopt -q nullglob
-	local shoptExitStatus="$?"
-	shopt -s nullglob
-
 	hasRanFile=no
 	firstFileMatch=
 	for aFileMatch in "$file".*?; do
@@ -30,9 +26,6 @@ helper.get_executable_file() {
 		hasRanFile=yes
 		firstFileMatch="$aFileMatch"
 	done
-
-	(( shoptExitStatus != 0 )) && shopt -u nullglob
-
 
 	if [[ -n $firstFileMatch && ! -x $firstFileMatch ]]; then
 		log.warn "File '$firstFileMatch' will be executed, but it is not marked as executable"

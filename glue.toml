@@ -1,4 +1,4 @@
-using = ['Bash', 'Docker']
+using = ['Bash', 'Docker', 'Test']
 gitRepoName = 'glue'
 distroPackageName = 'glue'
 

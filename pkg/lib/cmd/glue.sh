@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -Eo pipefail
-shopt -s extglob
+shopt -s extglob nullglob
 
 source "$PROGRAM_LIB_DIR/util/util.sh" || { echo "Error: Could not source file"; exit 1; }
 source "$PROGRAM_LIB_DIR/util/get.sh" || util.source_error
@@ -68,12 +68,12 @@ main() {
 	@arg cmd - Execute a meta task (command)
 	EOF
 
-	if [[ "${args[help]}" = yes ]]; then
+	if [ "${args[help]}" = yes ]; then
 		echo "$argsHelpText"
 		exit
 	fi
 
-	if [[ "${args[version]}" = yes ]]; then
+	if [ "${args[version]}" = yes ]; then
 		cat <<-EOF
 		Version: $PROGRAM_VERSION
 		EOF
@@ -88,11 +88,11 @@ main() {
 		list)
 			doList "$@"
 			;;
-		act)
-			doAct "$@"
+		run-action)
+			doRunAction "$@"
 			;;
-		cmd)
-			doCmd "$@"
+		run-command)
+			doRunCommand "$@"
 			;;
 		*)
 			log.error "Subcommand '${argsCommands[0]}' does not exist"
