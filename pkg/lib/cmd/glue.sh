@@ -36,6 +36,7 @@ main() {
 		[[ -n "$actualGlueVersionGit" && "$glueVersion" != "$actualGlueVersionGit" ]] \
 			&& [ "$glueVersion" != "$actualGlueVersion" ]
 		then
+			# TODO: this strategy would have to improve if we want to run multiple different versions of Glue concurrently
 			log.info 'Executing Glue from the managed repository'
 			local versionDir="${XDG_DATA_HOME:-$HOME/.local/share}/glue/repository"
 			if [ ! -d "$versionDir" ]; then
@@ -86,9 +87,6 @@ main() {
 			;;
 		list)
 			doList "$@"
-			;;
-		print)
-			doPrint "$@"
 			;;
 		act)
 			doAct "$@"

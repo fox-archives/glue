@@ -70,52 +70,60 @@ doSync() {
 }
 
 doList() {
-	local -A tasks=()
+	local -a tasks=()
 
 	shopt -s dotglob
 	shopt -s nullglob
 
 	local filePath
 	for filePath in "$GLUE_WD"/.glue/tasks/* "$GLUE_WD"/.glue/tasks/auto/*; do
-		local file="${filePath##*/}"
-		local task="${file%%.*}"
-
-		# Do not include files without a projectType
-		if [ "$file" = "$task" ]; then
+		if [ -d "$filePath" ]; then
 			continue
 		fi
 
-		tasks+=(["$task"]='')
+		local file="${filePath##*/}"
+
+		# Ensure entry does not already exist
+		local existingFile
+		for existingFile in "${tasks[@]}"; do
+			if [ "$existingFile" = "$file" ]; then
+				continue 2
+			fi
+		done
+
+		tasks+=("$file")
 	done
 
-	for task in "${!tasks[@]}"; do
-		echo "$task"
-	done
-}
+	local -r indent="    "
+	local task= previousProjectType=
+	local -a generalTasks=()
 
-doPrint() {
-	[[ -z $1 ]] && die 'No action file passed'
+	local -r sortedTasks="$(
+		for task in "${tasks[@]}"; do
+			printf "%s\n" "$task"
+		done | sort
+	)"
+	while IFS=. read -r projectType task fileEnding; do
+		# echo j "$task"
+		# If fileEnding is empty, it means the file looks like 'Bash.build.sh'
+		# rather than 'build.sh', so we save for printing the general for later
+		if [[ -z "$fileEnding" ]]; then
+			generalTasks+=("$projectType")
+			continue
+		fi
 
-	# TODO: code duplication
-	helper.get_executable_file "$GLUE_WD/.glue/actions/$1"
-	local overrideFile="$REPLY"
+		if [ "$previousProjectType" != "$projectType" ]; then
+			printf "${previousProjectType:+$'\n'}%s:\n" "$projectType"
 
-	helper.get_executable_file "$GLUE_WD/.glue/actions/auto/$1"
-	local autoFile="$REPLY"
+			previousProjectType="$projectType"
+		fi
 
-	hasRan=no
-	if [ -f "$overrideFile" ]; then
-		helper.exec_file "$overrideFile" "no"
-		hasRan=yes
-	elif [ -f "$autoFile" ]; then
-		helper.exec_file "$autoFile" "yes"
-		hasRan=yes
-	fi
+		printf "$indent%s\n" "$task"
+	done <<< "$sortedTasks"
 
-	if [[ $hasRan == no ]]; then
-		log.error "Action file '$1' did match any files"
-		echo "    -> Is the task contained in '.glue/actions/auto' or '.glue/actions'?" >&2
-		exit 1
+	if [ "${#generalTasks[@]}" -gt 0 ]; then
+		printf "${previousProjectType:+$'\n'}%s\n" "General:"
+		printf "$indent%s\n" "${generalTasks[@]}"
 	fi
 }
 
