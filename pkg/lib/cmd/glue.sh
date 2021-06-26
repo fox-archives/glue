@@ -2,7 +2,7 @@
 set -Eo pipefail
 shopt -s extglob nullglob
 
-declare -r PROGRAM_VERSION="0.8.0+d08d18f-DIRTY"
+declare -r PROGRAM_VERSION="0.8.0+b523e18-DIRTY"
 
 for f in "$PROGRAM_LIB_DIR"/{do.sh,util/*.sh}; do
 	if ! source "$f"; then
@@ -30,6 +30,7 @@ main() {
 	source args.parse "$@" <<-"EOF"
 	@flag [help.h] - Show help
 	@flag [version.v] - Show version
+	@flag [dry] - For 'run-task' and 'run-action', only show the files that would have been ran
 	@arg sync - Sync changes from the Glue store to the current project. This overrides and replaces the content in 'auto' directories
 	@arg list - Lists all tasks for each projectType
 	@arg run-task - Execute a whole task by specifying a metaTask
