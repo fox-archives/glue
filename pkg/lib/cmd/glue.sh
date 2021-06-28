@@ -27,7 +27,7 @@ main() {
 
 	# ------------------------- Main ------------------------- #
 	declare -A args=()
-	source args.parse "$@" <<-"EOF"
+	source bash-args parse "$@" <<-"EOF"
 	@flag [help.h] - Show help
 	@flag [version.v] - Show version
 	@flag [dry] - For 'run-task' and 'run-action', only show the files that would have been ran

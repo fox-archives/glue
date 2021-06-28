@@ -36,14 +36,13 @@ doSync() {
 	# <directoryToSearchAnnotations:annotationName:directoryToSearchForFile>
 	local arg
 	for arg in 'tasks:useAction:actions' 'actions:useAction:actions' 'actions:useConfig:configs'; do
-		local searchDir="${arg%%:*}"
-		local annotationName="${arg#*:}"; annotationName="${annotationName%:*}"
-		local fileDir="${arg##*:}"
+		local searchDir= annotationName= fileDir=
+		IFS=: read -r searchDir annotationName fileDir <<< "$arg"
 
 		log.info "Copying proper files and dirs from '\$GLUE_STORE/$searchDir to '$fileDir/"
 
 		local -a files=()
-		readarray -d $'\0' files < <(find "$GLUE_WD"/.glue/$searchDir/{,auto/} -ignore_readdir_race -type f \
+		readarray -d $'\0' files < <(find "$GLUE_WD"/.glue/"$searchDir"/{,auto/} -ignore_readdir_race -type f \
 				-exec cat {} \; \
 			| sed -Ene "s/^(\s*)?(\/\/|#)(\s*)?glue(\s*)?${annotationName}\((.*?)\)$/\5/p" - \
 			| sort -u \

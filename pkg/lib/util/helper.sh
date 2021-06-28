@@ -40,7 +40,7 @@ helper.get_executable_file() {
 helper.exec_file() {
 	file="$1"
 	isAuto="$2"
-	shift; shift;
+	shift; shift
 
 	if [[ ${file::1} != / && ${file::2} != ./ ]]; then
 		file="./$file"
@@ -83,6 +83,14 @@ helper.switch_to_correct_glue_version() {
 	actualGlueVersion="${PROGRAM_VERSION%*:}"
 	actualGlueVersion="${actualGlueVersion%"${actualGlueVersion##*[![:space:]]}"}"
 
+	if [[ -v GLUE_DEBUG ]]; then
+		cat <<-EOF
+		glueVersion: $glueVersion
+		actualGlueVersion: $actualGlueVersion
+		actualGlueVersionGit: $actualGlueVersionGit
+		EOF
+	fi
+
 	if [[ -n "$actualGlueVersionGit" && "$glueVersion" != "$actualGlueVersionGit" ]] \
 			&& [ "$glueVersion" != "$actualGlueVersion" ]
 		then
@@ -94,14 +102,14 @@ helper.switch_to_correct_glue_version() {
 				git -C "$versionDir" clone 'https://github.com/eankeen/glue' .
 			fi
 
-			if ! git -C "$versionDir" cat-file -e "$glueVersion"; then
+			if ! git -C "$versionDir" cat-file -e "$glueVersion" 2>/dev/null; then
 				echo
 				git -C "$versionDir" fetch origin main
 				git -C "$versionDir" merge origin main
 			fi
 
-			if ! git -C "$versionDir" cat-file -e "$glueVersion"; then
-				die "glueVersion '$glueVersion' is not a valid Git object"
+			if ! git -C "$versionDir" cat-file -e "$glueVersion" 2>/dev/null; then
+				die "glueVersion '$glueVersion' is not a valid Git object for the 'Glue' repository"
 			fi
 
 			git -C "$versionDir" switch "$glueVersion" >/dev/null 2>&1
