@@ -2,7 +2,7 @@
 set -Eeo pipefail
 shopt -s extglob nullglob
 
-declare PROGRAM_VERSION="0.8.0+b523e18-DIRTY"
+declare -r PROGRAM_VERSION="0.8.0+b523e18-DIRTY"
 
 for f in "$PROGRAM_LIB_DIR"/{commands,util}/*.sh; do
 	if ! source "$f"; then
@@ -57,27 +57,27 @@ main() {
 		sync)
 			doPre
 
-			doSync "$@"
+			do-sync "$@"
 			;;
 		list)
 			doPre
 
-			doList "$@"
+			do-list "$@"
 			;;
 		run-action)
 			doPre
 
-			doRunAction "$@"
+			do-run-action "$@"
 			;;
 		run-task)
 			doPre
 
-			doRunTask "$@"
+			do-run-task "$@"
 			;;
 		run-file)
 			doPre
 
-			doRunFile "$@"
+			do-run-file "$@"
 			;;
 		init)
 			do-init "$@"
