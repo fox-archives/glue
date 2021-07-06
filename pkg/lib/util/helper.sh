@@ -79,11 +79,11 @@ helper.switch_to_correct_glue_version() {
 
 	# Ensure we have a repository with the full history
 	if [ ! -d "$glueDataDir/repository" ]; then
-		if ! git clone 'https://github.com/eankeen/glue' "$glueDataDir/repository" >/dev/null; then
+		if ! git clone 'https://github.com/eankeen/glue' "$glueDataDir/repository" &>/dev/null; then
 			die "Could not clone Glue to '$glueDataDir/repository'"
 		fi
 	fi
-	if ! git -C "$glueDataDir/repository" pull >/dev/null; then
+	if ! git -C "$glueDataDir/repository" pull &>/dev/null; then
 		die "Could not pull latest Glue changes. Delete '$glueDataDir/repository' and try again"
 	fi
 
@@ -128,10 +128,6 @@ helper.switch_to_correct_glue_version() {
 	# have any. This is to make things simpler
 	if [ ! -d "$glueDataDir/versions/$newVersion" ]; then
 		mkdir -p "$glueDataDir/versions/$newVersion"
-		# if ! git -C "$glueDataDir/versions/$newVersion" clone --depth=1 --branch "$newVersion" 'https://github.com/eankeen/glue' . >/dev/null; then
-		# 	die "Could not clone Glue at revision '$newVersion' to '$glueDataDir/versions'"
-		# fi
-
 		if ! git -C "$glueDataDir/versions/$newVersion" clone 'https://github.com/eankeen/glue' . >/dev/null; then
 			die "Could not clone Glue version '$newVersion' to '$glueDataDir/versions'"
 		fi
@@ -139,6 +135,10 @@ helper.switch_to_correct_glue_version() {
 		if ! git -C "$glueDataDir/versions/$newVersion" reset --hard "$newVersion"; then
 			die "Could not reset the version of Glue to '$newVersion' in '$glueDataDir/versions/$newVersion'"
 		fi
+	fi
+
+	if [ "$(git -C "$glueDataDir/versions/$newVersion" rev-parse HEAD)" != "$newVersion" ]; then
+		die "Verification of revision switch for directory '$glueDataDir/versions/$newVersion' failed"
 	fi
 
 	log.info "Using new ($newVersion) Glue version"
