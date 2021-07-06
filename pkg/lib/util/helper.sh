@@ -68,7 +68,7 @@ helper.exec_file() {
 
 # TODO: have command that pulls automatically
 # @description Switch to the correct Glue version
-# @noargs
+# @args Pass all arguments
 helper.switch_to_correct_glue_version() {
 	if [[ -v GLUE_NO_SWITCH_VERSION ]]; then
 		log.warn "Environment variable 'GLUE_NO_SWITCH_VERSION' is set. Skipping version switch"
