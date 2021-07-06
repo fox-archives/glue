@@ -1,29 +1,19 @@
 #!/usr/bin/env bash
+# TODO add -e (check for return 1's)
 set -Eo pipefail
 shopt -s extglob nullglob
 
-declare -r PROGRAM_VERSION="0.8.0+b523e18-DIRTY"
+declare PROGRAM_VERSION="0.8.0+b523e18-DIRTY"
 
-for f in "$PROGRAM_LIB_DIR"/{do.sh,util/*.sh}; do
+for f in "$PROGRAM_LIB_DIR"/{commands,util}/*.sh; do
 	if ! source "$f"; then
 		echo "Error: Could not source file '$f' or error doing so"
 		exit 1
 	fi
 done
 
-set.wd
-declare GLUE_WD="$PWD"
-
 main() {
 	helper.switch_to_correct_glue_version
-
-	util.get_config_string 'storeDir'
-	GLUE_STORE="${GLUE_STORE:-${REPLY:-$HOME/.glue-store}}"
-
-	util.get_config_array 'using'
-	# shellcheck disable=SC2034
-	IFS=' ' read -ra GLUE_USING <<< "${REPLIES[@]}"
-
 
 	# ------------------------- Main ------------------------- #
 	declare -A args=()
@@ -50,21 +40,42 @@ main() {
 		exit
 	fi
 
+	doPre() {
+		set.wd
+		declare GLUE_WD="$PWD"
+
+		util.get_config_string 'storeDir'
+		GLUE_STORE="${GLUE_STORE:-${REPLY:-$HOME/.glue-store}}"
+
+		util.get_config_array 'using'
+		# shellcheck disable=SC2034
+		IFS=' ' read -ra GLUE_USING <<< "${REPLIES[@]}"
+	}
 	# shellcheck disable=SC2154
 	case "${argsCommands[0]}" in
 		sync)
+			doPre
+
 			doSync "$@"
 			;;
 		list)
+			doPre
+
 			doList "$@"
 			;;
 		run-action)
+			doPre
+
 			doRunAction "$@"
 			;;
 		run-task)
+			doPre
+
 			doRunTask "$@"
 			;;
 		run-file)
+			doPre
+
 			doRunFile "$@"
 			;;
 		init)
