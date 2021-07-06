@@ -17,6 +17,10 @@ The location of the local Glue configuration file. By default, it's `glue.toml`,
 
 The location of your Glue store. This should be set in your Global configuration `init.sh` file, but you can override it. If no store is specified, the default is `~/.glue-store`
 
+## `GLUE_NO_SWITCH_VERSION`
+
+Do not switch the version of Glue. Usually, you wouldn't want this enabled, but it's useful when debugging Glue itself
+
 ## Configuration for `glue.toml`
 
 There are the parameters used by `Glue` itself; scripts in your Glue store may read different values from the file

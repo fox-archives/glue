@@ -69,6 +69,10 @@ helper.exec_file() {
 # @description Switch to the correct Glue version
 # @noargs
 helper.switch_to_correct_glue_version() {
+	if [[ -v GLUE_NO_SWITCH_VERSION ]]; then
+		return
+	fi
+
 	util.get_toml_string "$GLUE_WD/glue-auto.toml" 'glueVersion'
 	local glueVersion="$REPLY"
 
