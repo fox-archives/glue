@@ -13,8 +13,6 @@ for f in "$PROGRAM_LIB_DIR"/{commands,util}/*.sh; do
 done
 
 main() {
-	helper.switch_to_correct_glue_version
-
 	# ------------------------- Main ------------------------- #
 	declare -A args=()
 	source bash-args parse "$@" <<-"EOF"
@@ -44,6 +42,8 @@ main() {
 		set.wd
 		declare GLUE_WD="$PWD"
 
+		helper.switch_to_correct_glue_version
+
 		util.get_config_string 'storeDir'
 		GLUE_STORE="${GLUE_STORE:-${REPLY:-$HOME/.glue-store}}"
 
@@ -51,6 +51,7 @@ main() {
 		# shellcheck disable=SC2034
 		IFS=' ' read -ra GLUE_USING <<< "${REPLIES[@]}"
 	}
+
 	# shellcheck disable=SC2154
 	case "${argsCommands[0]}" in
 		sync)
@@ -82,6 +83,10 @@ main() {
 			do-init "$@"
 			;;
 		*)
+			# We run 'doPre' here because we want 'Glue' to be able to execute
+			# subcommands that are valid in a future release
+			doPre
+
 			log.error "Subcommand '${argsCommands[0]}' does not exist"
 			if [ -n "$argsHelpText" ]; then
 				echo "$argsHelpText"

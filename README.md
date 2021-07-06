@@ -46,7 +46,7 @@ Some detraments of Glue include
 
 ### Details
 
-CURRENT STATE: BETA
+CURRENT STATE: IN DEVELOPMENT
 
 For concrete examples see [glue-example](https://github.com/eankeen/glue-example) and it's respective [glue-store](https://github.com/eankeen/glue-store)
 

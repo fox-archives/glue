@@ -101,6 +101,7 @@ helper.switch_to_correct_glue_version() {
 			# TODO: this strategy would have to improve if we want to run multiple different versions of Glue concurrently
 			log.info 'Executing Glue from the managed repository'
 			local versionDir="${XDG_DATA_HOME:-$HOME/.local/share}/glue/repository"
+
 			if [ ! -d "$versionDir" ]; then
 				mkdir -p "$versionDir"
 				git -C "$versionDir" clone 'https://github.com/eankeen/glue' .
@@ -116,7 +117,7 @@ helper.switch_to_correct_glue_version() {
 				die "glueVersion '$glueVersion' is not a valid Git object for the 'Glue' repository"
 			fi
 
-			git -C "$versionDir" switch "$glueVersion" >/dev/null 2>&1
+			git -C "$versionDir" switch "$glueVersion" &>/dev/null
 			"$versionDir/pkg/bin/glue" "$@"
 	fi
 }

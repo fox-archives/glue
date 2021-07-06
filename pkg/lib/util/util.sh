@@ -21,6 +21,8 @@ util.get_toml_string() {
 	local tomlFile="$1"
 	local keyName="$2"
 
+	ensure.file "$tomlFile"
+
 	local grepLine=
 	while IFS= read -r line; do
 		if [[ $line == *"$keyName"*=* ]]; then
