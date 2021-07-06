@@ -67,6 +67,9 @@ main() {
 		run-file)
 			doRunFile "$@"
 			;;
+		init)
+			do-init "$@"
+			;;
 		*)
 			log.error "Subcommand '${argsCommands[0]}' does not exist"
 			if [ -n "$argsHelpText" ]; then
