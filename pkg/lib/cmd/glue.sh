@@ -52,8 +52,6 @@ main() {
 		exit
 	fi
 
-
-
 	# shellcheck disable=SC2154
 	case "${argsCommands[0]}" in
 		sync)

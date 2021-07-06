@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 
-source ./lib/util/get.sh
+load 'util/init.sh'
 
 @test "get.task" {
 	local input result expected

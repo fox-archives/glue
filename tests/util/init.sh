@@ -4,7 +4,12 @@
 load 'util/create.sh'
 
 export PATH="$PWD/pkg/bin:$PATH"
+for f in "$PWD"/pkg/lib/{commands,util}/?*.sh; do
+	source "$f"
+done
 
+export GLUE_CONFIG_USER=
+export GLUE_CONFIG_LOCAL=
 export GLUE_NO_SWITCH_VERSION=
 
 setup() {
