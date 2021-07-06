@@ -29,3 +29,15 @@ ensure.file() {
 		die "ensure.file: File '$fileName' does not exist. It must exist"
 	fi
 }
+
+# @description Ensure that a change directory was successfull
+# @arg $1 string Directory to change to
+ensure.cd() {
+	local dir="$1"
+
+	ensure.nonZero 'dir' "$dir"
+
+	if ! cd "$dir"; then
+		die "cd failed"
+	fi
+}

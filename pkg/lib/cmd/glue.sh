@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# TODO add -e (check for return 1's)
-set -Eo pipefail
+set -Eeo pipefail
 shopt -s extglob nullglob
 
 declare PROGRAM_VERSION="0.8.0+b523e18-DIRTY"
@@ -40,6 +39,7 @@ main() {
 
 	doPre() {
 		set.wd
+		# shellcheck disable=SC2034
 		declare GLUE_WD="$PWD"
 
 		helper.switch_to_correct_glue_version
