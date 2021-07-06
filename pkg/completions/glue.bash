@@ -1,5 +1,17 @@
 # shellcheck shell=bash
 
+_glue_get_wd() {
+	while [[ ! -f "glue.toml" && "$PWD" != / ]]; do
+		cd ..
+	done
+
+	if [[ $PWD == / ]]; then
+		return
+	fi
+
+	printf "%s" "$PWD"
+}
+
 _glue() {
 	local -ra listPreSubcommandOptions=(--help -h --version -v)
 	local -ra listSubcommands=(sync list run-action run-task run-file)
@@ -65,8 +77,16 @@ _glue() {
 			list)
 				;;
 			run-action)
+				local glueWd
+				glueWd="$(_glue_get_wd)"
+				mapfile -td $'\0' glueFiles < <(find "$glueWd"/.glue/actions/{,auto/} -ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -printf '%f\0' 2>/dev/null)
+				mapfile -t COMPREPLY < <(IFS=' ' compgen -W "${glueFiles[*]}" -- "$currentWord")
 				;;
 			run-task)
+				local glueWd
+				glueWd="$(_glue_get_wd)"
+				mapfile -td $'\0' glueFiles < <(find "$glueWd"/.glue/tasks/{,auto/} -ignore_readdir_race -mindepth 1 -maxdepth 1 -type f -printf '%f\0' 2>/dev/null)
+				mapfile -t COMPREPLY < <(IFS=' ' compgen -W "${glueFiles[*]}" -- "$currentWord")
 				;;
 			run-file)
 				;;
