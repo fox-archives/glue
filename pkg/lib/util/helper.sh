@@ -97,6 +97,7 @@ helper.switch_to_correct_glue_version() {
 		die "There must be a value for 'glueVersion' in 'glue-auto.toml'"
 	fi
 
+	echo debug "$PROGRAM_LIB_DIR"
 	# For now, assume that 'Glue' was installed with Git
 	local currentVersionSha1= currentVersionTag=
 	if ! currentVersionSha1="$(git -C "$PROGRAM_LIB_DIR/../../" rev-parse HEAD)"; then
@@ -128,7 +129,7 @@ helper.switch_to_correct_glue_version() {
 	# have any. This is to make things simpler
 	if [ ! -d "$glueDataDir/versions/$newVersion" ]; then
 		mkdir -p "$glueDataDir/versions/$newVersion"
-		if ! git -C "$glueDataDir/versions/$newVersion" clone 'https://github.com/eankeen/glue' . >/dev/null; then
+		if ! git -C "$glueDataDir/versions/$newVersion" clone 'https://github.com/eankeen/glue' . &>/dev/null; then
 			die "Could not clone Glue version '$newVersion' to '$glueDataDir/versions'"
 		fi
 
