@@ -1,7 +1,7 @@
 [package]
 name = 'glue'
 slug = 'glue'
-version = ''
+version = '0.8.1'
 authors = ['Edwin Kofler <edwin@kofler.dev>']
 description = 'Hypergeneral boilerplate manager and task runner'
 
