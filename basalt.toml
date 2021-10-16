@@ -3,7 +3,7 @@ name = 'glue'
 slug = 'glue'
 version = ''
 authors = ['Edwin Kofler <edwin@kofler.dev>']
-description = ''
+description = 'Hypergeneral boilerplate manager and task runner'
 
 [run]
 dependencies = ['https://github.com/hyperupcall/bash-args.git@80bef81360e259a3d51a3ff2d635e4ae28349354']

@@ -1,5 +1,9 @@
 # Glue
 
+Hypergeneral boilerplate manager and task runner
+
+--
+
 Glue is the manifestation of a generalized task runner with respect to language agnosticity
 
 If you have a Node project, are you tired of the following monotonous tasks?
