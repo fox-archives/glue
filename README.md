@@ -2,7 +2,12 @@
 
 Hypergeneral boilerplate manager and task runner
 
---
+## Archived
+
+Superceded by [Foxxy](https://github.com/hyperupcall/foxxy)
+
+---
+
 
 Glue is the manifestation of a generalized task runner with respect to language agnosticity
 
