@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Edwin Kofler" /><link rel="canonical" href="https://eankeen.github.io/glue/api/" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>API - glue</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "API";
+        var mkdocs_page_input_path = "api.md";
+        var mkdocs_page_url = "/glue/api/";
+      </script>
+    
+    <script src="../js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> glue
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Glue</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">API</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#gluetoml">glue.toml</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#name">name</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#using">using</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#glue-autotoml">glue-auto.toml</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#version">version</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#environment-variables">Environment Variables</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#glue_wd">GLUE_WD</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#glue_is_auto">GLUE_IS_AUTO</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#glue_bootstrap">GLUE_BOOTSTRAP</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#directories">Directories</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tasks">tasks</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#actions">actions</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#configs">configs</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#util">util</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#output">output</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#generated">generated</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#root">root</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../details/">Details</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../reference/">Reference</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../setup/">Setup</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../tasks/">Tasks</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Explanations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../explanations/glue-version-switch/">Glue Version Switch</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">glue</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li><li>API</li>
+    <li class="wy-breadcrumbs-aside">
+        <a href="https://github.com/eankeen/glue/edit/master/docs/api.md"
+          class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="api">API</h1>
+<p>For executables ran in <code>actions</code> and <code>tasks</code>, the following environment variables are available</p>
+<h2 id="gluetoml"><code>glue.toml</code></h2>
+<p>The <code>glue.toml</code> can be expected to have the following configuration</p>
+<h3 id="name"><code>name</code></h3>
+<p>Name of the project. This is a pretty name</p>
+<h3 id="using"><code>using</code></h3>
+<p>String or array of <code>projectType</code>s to use</p>
+<h2 id="glue-autotoml"><code>glue-auto.toml</code></h2>
+<p>File that contains project specific configuration data only read and updated by scripts</p>
+<h3 id="version"><code>version</code></h3>
+<p>Current <a href="https://semver.org">Semantic Version</a> of the project</p>
+<h2 id="environment-variables">Environment Variables</h2>
+<h3 id="glue_wd"><code>GLUE_WD</code></h3>
+<p>An absolute path to the current project. In other words, the directory that contains the <code>.glue</code> directory</p>
+<h3 id="glue_is_auto"><code>GLUE_IS_AUTO</code></h3>
+<p>Whether or not the currently running script has a parent folder of 'auto'. Has a value of either <code>yes</code> or <code>no</code>.</p>
+<h3 id="glue_bootstrap"><code>GLUE_BOOTSTRAP</code></h3>
+<p>The bootstrap commands to be executed when a script under the 'tasks' or 'actions' directory is executed or sourced. This has the contents of the <code>boostrap.*</code> file in your Glue store</p>
+<h2 id="directories">Directories</h2>
+<p>Certain directories have an intrinsic meaning and should be used as such. All directories are a subdirectory of <code>.glue</code> and should be tracked by your VCS</p>
+<h3 id="tasks"><code>tasks</code></h3>
+<p>The location Glue looks to execute a particular task. Glue also scans this directory to find <code>useAction()</code> annotations</p>
+<h3 id="actions"><code>actions</code></h3>
+<p>The location a script in 'tasks' looks to source to perform a more fine-grained action (ex. run <code>eslint</code>). Glue also scans this directorie to find <code>useConfig()</code> annotations</p>
+<h3 id="configs"><code>configs</code></h3>
+<p>Where config files are stored. Glue doesn't use this file directly, but it copies its contents because your scripts will likely require configuration</p>
+<h3 id="util"><code>util</code></h3>
+<p>Scripts in <code>util</code> contain functionality shared by both scripts in <code>tasks</code> and <code>actions</code>. Glue doesn't use this file directly, but it copies its contents nevertheless</p>
+<h3 id="output"><code>output</code></h3>
+<p>Any output that your scripts may emit. Since this directory is one of the only ones (besides <code>state</code>) that is not contained in the Glue store, it should not have an <code>auto</code> subdirectory</p>
+<h3 id="generated"><code>generated</code></h3>
+<p>Any temporary or permanent files your (action) script may emit. Please namespace all of your files under the <code>action</code> script name. For example, generate under <code>tool-shdoc</code> for <code>actions/tool-shdoc.sh</code></p>
+<h3 id="root"><code>root</code></h3>
+<p>This file is only present in the Glue store. All <em>files</em> it contains is copied to the <code>.glue/</code> directories. Primarily, this is used to house a <code>.gitignore</code> for the <code>generated</code> subdirectory</p>
+<h1 id="miscellaneous">Miscellaneous</h1>
+<ul>
+<li>Most script-writing-gotchia's are due to the fact that the script file can reside in either <code>tasks/auto/script.sh</code> or <code>tasks/script.sh</code></li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href=".." class="btn btn-neutral float-left" title="Glue"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../details/" class="btn btn-neutral float-right" title="Details">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>© Edwin Kofler</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/eankeen/glue" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href=".." style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../details/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme_extra.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

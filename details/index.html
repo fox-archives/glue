@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Edwin Kofler" /><link rel="canonical" href="https://eankeen.github.io/glue/details/" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Details - glue</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Details";
+        var mkdocs_page_input_path = "details.md";
+        var mkdocs_page_url = "/glue/details/";
+      </script>
+    
+    <script src="../js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> glue
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Glue</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../api/">API</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">Details</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#architecture">Architecture</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#execution-flow">Execution Flow</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#scripts">Scripts</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#project-type">Project Type</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#when">When</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#task">Task</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../reference/">Reference</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../setup/">Setup</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../tasks/">Tasks</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Explanations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../explanations/glue-version-switch/">Glue Version Switch</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">glue</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li><li>Details</li>
+    <li class="wy-breadcrumbs-aside">
+        <a href="https://github.com/eankeen/glue/edit/master/docs/details.md"
+          class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="details">Details</h1>
+<p>For every project you want to use Glue with, a <code>.glue</code> directory is used to contain everything related to Glue: configuration, scripts, and script output.</p>
+<p>There are two types of scripts: 'command' and 'action'. 'command' scripts can simply be though of the execution of a particular task relating to a programming language. For example: <code>Build Go library</code> or <code>Deploy Node server</code>. Each 'command' script calls out to an 'action' script that does the actual command. For example a script containaing <code>go build .</code> or <code>ansible-playbook playbook.yml</code>. Two categories of scripts exist to increase composability of 'actions' across languages (or even possibly domains!). Lastly, 'command' and 'action' scripts are contained in the <code>.glue/tasks</code> and <code>.glue/actions</code> directories, respectively</p>
+<p>The following explain the different parts of Glue, in no particular order</p>
+<h2 id="architecture">Architecture</h2>
+<p>The generality of Glue and it's behavior keep the feature set and potential bugs to a minimal, but happens to significantly offload complexity to implementations of <code>actions</code> and <code>tasks</code> scripts.</p>
+<p>Because Glue is general, you can use any executable to evaluate your scripts (which is specifically why I mention executables having a file extension of <code>.*</code>). I use Bash, but of course you can use JavaScript, Python etc. In general, interpreted programming languages with dynamic imports and eval facilities <em>should</em> play very nicely. Note that you wouldn't want to install external dependencies with a language-dependent package manger as that would make managing your Glue store <em>significantly</em> more difficult</p>
+<h2 id="execution-flow">Execution Flow</h2>
+<p>It's important to understand the execution flow of Glue when using the <code>cmd</code> subcommand to run a particular task. The following is an overview</p>
+<ol>
+<li>
+<p>When first invoking Glue, it looks for an <code>bootstrap.*</code> file in the Glue store, setting its contents to <code>$GLUE_BOOTSTRAP</code></p>
+</li>
+<li>
+<p>If a task is specified through the <code>cmd</code> subcommand, it looks for that task in the <code>.glue/tasks</code>, then <code>.glue/tasks/auto</code> directories of your project. If none are found, it displays an error. See <a href="#scripts">Scripts</a> for more details</p>
+</li>
+<li>
+<p>Assuming the task is found, the file is executed, and the <code>$GLUE_BOOTSTRAP</code>, <code>$GLUE_WD</code>, and <code>$GLUE_IS_AUTO</code> variables are passed into the environment. The rest of the execution is now dependent on the user's Glue store</p>
+</li>
+</ol>
+<h2 id="scripts">Scripts</h2>
+<p>Glue's process of finding and executing scripts makes script-writing easy to extend, modify, and compose. This functionality is only for scripts in the <code>tasks</code> (not <code>actions</code>) directory.</p>
+<p>A meta task is a combination of a Project Type, a Task, and a When. Not all components need to be present and not all compositional variations are valid</p>
+<p>For example</p>
+<pre><code class="language-sh"># glue cmd [projectType]&lt;.task&gt;[-when]
+
+glue cmd NodeJS_Server.build-before
+</code></pre>
+<p><code>NodeJS_Server</code> is the project type, <code>build</code> is the task, and <code>before</code> is the 'when'</p>
+<p>From this meta task, Glue searches for a script (ex. NodeJS_Server.build-before.sh<code>) in</code>.glue/tasks/auto<code>. However, if one by the same name is found in</code>.glue/tasks`, it uses that one instead</p>
+<p>As you can see, script names are nearly identical to the meta task. The following code blocks lists all variations and their semantics</p>
+<pre><code class="language-sh"># Only task
+glue cmd build
+# Runs all 'build' scripts for all projectTypes specified in `build.sh`.
+# This also runs the generic build script (ex. build.sh) last
+
+# And projectType, task
+glue cmd NodeJS_Server.build
+# Runs all 'build' scripts for the NodeJS_Server project type. This
+# also runs the generic build script (ex. build.sh) last
+
+# And task, when
+glue cmd NodeJS_Server-before
+# Invalid because it doesn't make sense
+
+# And projectType, task, when
+glue cmd NodeJS_Server.ci-before
+glue cmd NodeJS_Server.ci-only
+</code></pre>
+<h3 id="project-type">Project Type</h3>
+<pre><code class="language-sh">glue cmd NodeJS_Server.build
+</code></pre>
+<p>Runs the 'build' script for the NodeJS_Server projectType</p>
+<h3 id="when">When</h3>
+<pre><code class="language-txt">tasks/NodeJS_Server.build-before.sh
+tasks/NodeJS_Server.build.sh
+tasks/NodeJS_Server.build-after.sh
+</code></pre>
+<p><em>Optionally</em> add a 'when' to your meta task, which is a hyphen followed by either <code>before</code>, or <code>after</code>. In this example, it builds a NodeJS Server (ex. compiles TypeScript)</p>
+<p>To execute all three in order:</p>
+<pre><code class="language-sh">glue cmd NodeJS_Server.build
+</code></pre>
+<p>To execute 'NodeJS_Server.build-before.sh`</p>
+<pre><code class="language-sh">glue cmd NodeJS_Server.build-before.sh
+</code></pre>
+<p>To execute <em>only</em> <code>NodeJS_Server.build.sh</code></p>
+<pre><code class="language-sh">glue cmd NodeJS_Server.build-only.sh
+</code></pre>
+<p>When is <em>super</em> useful if you want to extend the funtionality of a script without changing it</p>
+<p>For example, consider the following folder structure</p>
+<pre><code class="language-sh">tasks/auto/NodeJS_Server.build.sh
+tasks/NodeJS_Server.build-after.sh
+</code></pre>
+<p>In this case, Glue will execute <code>NodeJS_Server.build.sh</code>, then <code>NodeJS_Server.build-after.sh</code>. By doing this, you extend the functionality of your build scripts. Note that omitting the 'When' portion would cause only the script in <code>tasks/NodeJS_Server.build.sh</code> to execute</p>
+<h3 id="task">Task</h3>
+<pre><code class="language-sh">glue cmd build
+</code></pre>
+<p>This performs the build task for every projectType specified in your <code>glue.toml</code>.</p>
+<p>For example, if in your <code>glue.toml</code>, you have <code>using=["NodeJS_Server", "Python"]</code>, it will functionality be the same as the following</p>
+<pre><code class="language-sh">glue cmd NodeJS_Server.build
+glue cmd Python.build
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../api/" class="btn btn-neutral float-left" title="API"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../reference/" class="btn btn-neutral float-right" title="Reference">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>© Edwin Kofler</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/eankeen/glue" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../api/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../reference/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme_extra.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

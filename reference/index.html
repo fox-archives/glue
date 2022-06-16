@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Edwin Kofler" /><link rel="canonical" href="https://eankeen.github.io/glue/reference/" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Reference - glue</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Reference";
+        var mkdocs_page_input_path = "reference.md";
+        var mkdocs_page_url = "/glue/reference/";
+      </script>
+    
+    <script src="../js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> glue
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Glue</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../api/">API</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../details/">Details</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">Reference</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#environment-variables">Environment Variables</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#glue_config_user">GLUE_CONFIG_USER</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#glue_config_local">GLUE_CONFIG_LOCAL</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#glue_store">GLUE_STORE</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#glue_no_switch_version">GLUE_NO_SWITCH_VERSION</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#configuration-for-gluetoml">Configuration for glue.toml</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#storedir">storeDir</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#example">Example</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../setup/">Setup</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../tasks/">Tasks</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Explanations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../explanations/glue-version-switch/">Glue Version Switch</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">glue</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li><li>Reference</li>
+    <li class="wy-breadcrumbs-aside">
+        <a href="https://github.com/eankeen/glue/edit/master/docs/reference.md"
+          class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="reference">Reference</h1>
+<h2 id="environment-variables">Environment Variables</h2>
+<p>Use these to change the characteristics of how Glue operates</p>
+<h3 id="glue_config_user"><code>GLUE_CONFIG_USER</code></h3>
+<p>The location of the global Glue configuration file. We comply with the XDG Base Directory specification, defaulting to a location of <code>~/.config/glue/glue.toml</code> if <code>GLUE_CONFIG_USER</code> is unset or a null string</p>
+<h3 id="glue_config_local"><code>GLUE_CONFIG_LOCAL</code></h3>
+<p>The location of the local Glue configuration file. By default, it's <code>glue.toml</code>, relative to the current working directory</p>
+<h3 id="glue_store"><code>GLUE_STORE</code></h3>
+<p>The location of your Glue store. This should be set in your Global configuration <code>init.sh</code> file, but you can override it. If no store is specified, the default is <code>~/.glue-store</code></p>
+<h2 id="glue_no_switch_version"><code>GLUE_NO_SWITCH_VERSION</code></h2>
+<p>Do not switch the version of Glue. Usually, you wouldn't want this enabled, but it's useful when debugging Glue itself</p>
+<h2 id="configuration-for-gluetoml">Configuration for <code>glue.toml</code></h2>
+<p>There are the parameters used by <code>Glue</code> itself; scripts in your Glue store may read different values from the file</p>
+<h2 id="storedir"><code>storeDir</code></h2>
+<p>Location of the Glue store. See mine <a href="https://github.com/eankeen/glue-store">here</a></p>
+<h3 id="example">Example</h3>
+<pre><code class="language-toml">storeDir = &quot;~/repos/glue-store&quot;
+</code></pre>
+<h1 id="using"><code>using</code></h1>
+<p>Array of <code>projectType</code>s to use for the current project. These correspond to the names of files you place in the <code>tasks</code> subdirectory in your Glue store</p>
+<h3 id="example_1">Example</h3>
+<pre><code class="language-toml">using = [&quot;Bash&quot;, &quot;Docker&quot;]
+</code></pre>
+<h2 id="configuration-for-glue-autotoml">Configuration for <code>glue-auto.toml</code></h2>
+<p>This file is for data that you shouldn't have to manage. This includes version information that is automatically incremented, or will prompt you to increment itself. Like the <code>glue.toml</code> configuration, the following options are only used by <code>Glue</code>; more may be in use by your Glue store</p>
+<h3 id="glueversion"><code>glueVersion</code></h3>
+<p>The specified version of Glue. When this is specified, and the current version does not match, it will ensure Glue is cloned to <code>"${XDG_DATA_HOME:-$HOME/.local/share}/glue/repository"</code>, switch to the correct version, and execute with the same arguments. Valid versions include the full shasum of a Git commit, or a Git tag that represents a release</p>
+<h3 id="example_2">Example</h3>
+<pre><code class="language-toml">glueVersion = 'v0.9.0'
+# or
+glueVersion = '2414a21744785efafa2b97bc4137511671f13699'
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../details/" class="btn btn-neutral float-left" title="Details"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../setup/" class="btn btn-neutral float-right" title="Setup">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>© Edwin Kofler</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/eankeen/glue" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../details/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../setup/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme_extra.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
